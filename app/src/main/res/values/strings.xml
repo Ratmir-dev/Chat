@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Chat</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Настя Карпова</string>
+    <string name="nav_header_subtitle">89003331058</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Создать группу</string>
+    <string name="menu_gallery">Контакты</string>
+    <string name="menu_slideshow">Пригласить друзей</string>
+    <string name="menu_tools">Настройки</string>
+    <string name="menu_share">Вопросы о чате</string>
+</resources>
