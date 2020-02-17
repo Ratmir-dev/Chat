@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Login.Login">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:context=".MainActivity">
+
+        <com.google.android.material.textview.MaterialTextView
+
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_marginTop="40dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:textSize="18sp"
+            android:textColor="#EB470DEB"
+            android:text="Введите код активации"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginLeft="100dp"
+            android:layout_marginRight="100dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:inputType="phone"
+                    android:gravity="center"
+                    android:layout_weight ="3"
+                    android:maxLength="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="35dp"
+                    android:background="@drawable/edt"
+                    android:textSize="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:singleLine="true"
+                    android:id="@+id/code1"
+                    />
+            <com.google.android.material.textfield.TextInputEditText
+                    android:inputType="phone"
+                    android:layout_weight ="3"
+                    android:gravity="center"
+                    android:maxLength="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="35dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/edt"
+                    android:textSize="20dp"
+                    android:singleLine="true"
+                    android:id="@+id/code2"
+                    />
+            <com.google.android.material.textfield.TextInputEditText
+                    android:inputType="phone"
+                    android:gravity="center"
+                    android:layout_weight ="3"
+                    android:maxLength="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="35dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/edt"
+                    android:textSize="20dp"
+                    android:singleLine="true"
+                    android:id="@+id/code3"
+                    />
+            <com.google.android.material.textfield.TextInputEditText
+                    android:inputType="phone"
+                    android:layout_weight ="3"
+                    android:gravity="center"
+                    android:maxLength="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="35dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/edt"
+                    android:textSize="20dp"
+                    android:singleLine="true"
+                    android:id="@+id/code4"
+                    />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+        </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:layout_marginTop="30dp"
+            android:id="@+id/material_text_button"
+            android:layout_gravity="center"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:backgroundTint="#470DEB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFF"
+            android:text="Далее" />
+
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
