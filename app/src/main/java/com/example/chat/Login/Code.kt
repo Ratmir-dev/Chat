@@ -35,11 +35,12 @@ class Code : AppCompatActivity() {
         var back_pressed: Long = System.currentTimeMillis()
         var RESPONSE_CODE: String?=null
         var TOKEN: String? = null
+        var NUM: String? = null
 
 
     }
 
-        fun startNext(){
+    fun startNext(){
         val intent: Intent = Intent(this,MainActivity::class.java)
         intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
@@ -61,17 +62,14 @@ class Code : AppCompatActivity() {
         }
 
         override fun onPostExecute(result: String?) {
-
+            super.onPostExecute(result)
             Log.e("Code", RESPONSE_CODE.toString())
             var jsonResponse = JSONObject(result)
             var jsonstatus: String = jsonResponse.getString("response")
             RESPONSE_CODE = jsonstatus
             if(RESPONSE_CODE == "3") {
                 TOKEN = jsonResponse.getString("token")
-
-            }else{
-
-            }
+                }
         }
     }
 
@@ -138,6 +136,8 @@ class Code : AppCompatActivity() {
         btn.setOnClickListener {
            if( checkForEmpty(code1.text.toString(),code2.text.toString(),code3.text.toString(),code4.text.toString())){
                if (checkCode()){
+
+                   NetworkUtils.generateUrlCheckCode(NUM!!,code1.toString()+code2.toString()+code3.toString()+code4.toString())
 
 
 

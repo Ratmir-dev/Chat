@@ -20,6 +20,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import android.os.AsyncTask
+import com.example.chat.Login.Code.Companion.NUM
 import com.example.chat.NetworkUtils.Companion.generateUrlGetCode
 import com.example.chat.NetworkUtils.Companion.getResponseFromURL
 import com.google.gson.JsonObject
@@ -31,6 +32,7 @@ import java.io.IOException
 class DialogTest( var phone: String ,var c: Context) : DialogFragment() {
 companion object{
     var RESPONSE: String?=null
+
 }
 
     class QueryGetCode : AsyncTask<URL, Void, String>() {
@@ -70,7 +72,7 @@ companion object{
                 Log.e("DialogTest",url.toString())
                 QueryGetCode().execute(url)
 
-
+                NUM = phone
                 val intent: Intent = Intent(c, Code::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
