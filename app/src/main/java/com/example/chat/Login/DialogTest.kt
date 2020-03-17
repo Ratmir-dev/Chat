@@ -20,9 +20,13 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import android.os.AsyncTask
+import android.widget.EditText
 import com.example.chat.NetworkUtils.Companion.generateUrlGetCode
 import com.example.chat.NetworkUtils.Companion.getResponseFromURL
 import com.google.gson.JsonObject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
@@ -32,6 +36,7 @@ class DialogTest( var phone: String ,var c: Context) : DialogFragment() {
 companion object{
     var RESPONSE: String?=null
 }
+
 
     class QueryGetCode : AsyncTask<URL, Void, String>() {
 
@@ -65,12 +70,14 @@ companion object{
         return AlertDialog.Builder(activity!!).setTitle("+7 $phone")
             .setMessage("На указанный номер придет SMS с кодом активации")
             .setPositiveButton("Далее") { dialog, which ->
-
                 var url: URL = generateUrlGetCode("7$phone")
+                val job = CoroutineScope(Dispatchers.Default)
+                job.launch {
+                    val jsonStr = URL(url.toString()).readText()
+                    Log.e("Crt", jsonStr)
+                }
                 Log.e("DialogTest",url.toString())
                 QueryGetCode().execute(url)
-
-
                 val intent: Intent = Intent(c, Code::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)

@@ -62,7 +62,7 @@
                     android:inputType="phone"
                     android:gravity="center"
                     android:layout_weight ="3"
-                    android:maxLength="2"
+                    android:maxLength="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="35dp"
@@ -91,19 +91,66 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/timer_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="50dp"
+                android:gravity="center"
+                android:text="Повторная отправка кода через"
+                android:textColor="#EB414040"
+                android:textSize="12sp" />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/timer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text=""
+                />
+            <com.google.android.material.button.MaterialButton
+                android:textSize="12sp"
+                android:id="@+id/send"
+                android:layout_width="wrap_content"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Повторить отправку" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             >
-        </LinearLayout>
-        <com.google.android.material.button.MaterialButton
+
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_marginTop="34dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="5dp"
+                android:id="@+id/back"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_height="wrap_content"
+                android:text="Назад" />
+
+            <com.google.android.material.button.MaterialButton
             android:layout_marginTop="30dp"
+            android:layout_marginEnd="30dp"
             android:id="@+id/material_text_button"
-            android:layout_gravity="center"
+            android:layout_weight="1"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             app:backgroundTint="#470DEB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#FFF"
             android:text="Далее" />
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

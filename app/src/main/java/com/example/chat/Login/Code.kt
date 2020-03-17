@@ -7,6 +7,7 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.widget.EditText
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,6 +23,7 @@ import com.example.chat.DialogList
 import com.example.chat.MainActivity
 import com.example.chat.NetworkUtils
 import com.example.chat.R
+import com.google.android.material.textview.MaterialTextView
 import org.json.JSONObject
 import java.io.IOException
 import java.net.URL
@@ -39,7 +41,7 @@ class Code : AppCompatActivity() {
 
     }
 
-        fun startNext(){
+    fun startNext(){
         val intent: Intent = Intent(this,MainActivity::class.java)
         intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
@@ -70,12 +72,11 @@ class Code : AppCompatActivity() {
                 TOKEN = jsonResponse.getString("token")
 
             }else{
-
             }
         }
     }
 
-
+    //Выход по двойному клику
     override  fun onBackPressed() {
         if (back_pressed + 2000 > System.currentTimeMillis()){
             Toast.makeText(
@@ -93,6 +94,8 @@ class Code : AppCompatActivity() {
             back_pressed = System.currentTimeMillis()}
     }
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_code)
@@ -100,10 +103,44 @@ class Code : AppCompatActivity() {
         val code2:EditText = findViewById(R.id.code2)
         val code3:EditText = findViewById(R.id.code3)
         val code4:EditText = findViewById(R.id.code4)
-        val btn: Button = findViewById(R.id.material_text_button)
+        val btnNext: Button = findViewById(R.id.material_text_button)
+        val btnBack: Button = findViewById(R.id.back)
+        val btnSend:Button = findViewById(R.id.send)
+        val timer:MaterialTextView = findViewById(R.id.timer)
+        val timerText: MaterialTextView = findViewById(R.id.timer_text)
+        btnSend.visibility = View.INVISIBLE
 
+        btnSend.setOnClickListener {
+            btnSend.visibility = View.INVISIBLE
+            timer.visibility = View.VISIBLE
+            timerText.visibility = View.VISIBLE
+            Toast.makeText(this,"Отправлено", Toast.LENGTH_SHORT).show()
+            object : CountDownTimer(3000, 1000) {
+                override fun onFinish() {
+                    btnSend.visibility = View.VISIBLE
+                }
 
+                override fun onTick(milliseconds: Long) {
+                    val s: Long = milliseconds % 60000 / 1000
+                    val m: Long = milliseconds / 60000
+                    timer.text = String.format("%02d:%02d", m, s)
+                }
+            }.start()
+        }
+        //Таймер повторной отправки
+        object : CountDownTimer(3000, 1000) {
+            override fun onFinish() {
+                btnSend.visibility = View.VISIBLE
+                timer.visibility = View.INVISIBLE
+                timerText.visibility = View.INVISIBLE
+            }
 
+            override fun onTick(milliseconds: Long) {
+                val s: Long = milliseconds % 60000 / 1000
+                val m: Long = milliseconds / 60000
+                timer.text = String.format("%02d:%02d", m, s)
+            }
+        }.start()
 
 
 
@@ -135,7 +172,7 @@ class Code : AppCompatActivity() {
 
 
 
-        btn.setOnClickListener {
+        btnNext.setOnClickListener {
            if( checkForEmpty(code1.text.toString(),code2.text.toString(),code3.text.toString(),code4.text.toString())){
                if (checkCode()){
 
@@ -146,6 +183,10 @@ class Code : AppCompatActivity() {
 
            }
 
+        }
+        btnBack.setOnClickListener {
+            val intent = Intent(this, Login::class.java)
+            startActivity(intent)
         }
         code1.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
