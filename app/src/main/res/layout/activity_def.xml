@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="@color/black"
+    android:layout_height="match_parent"
+    tools:context=".Def">
+<com.google.android.material.button.MaterialButton
+    android:layout_width="match_parent"
+    android:textColor="#fff"
+    android:text="Login"
+    android:id="@+id/log"
+    android:background="#272727"
+    android:layout_height="wrap_content"
+/>
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
+        android:textColor="#fff"
+        android:text="home"
+        android:id="@+id/home"
+        android:background="#272727"
+        android:layout_marginTop="15dp"
+        android:layout_height="wrap_content"
+        />
+</LinearLayout>

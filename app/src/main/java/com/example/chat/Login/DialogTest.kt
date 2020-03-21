@@ -20,12 +20,21 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import android.os.AsyncTask
+import com.example.chat.Login.Code.Companion.NUM
+import com.example.chat.NetworkUtils
 import com.example.chat.NetworkUtils.Companion.generateUrlGetCode
 import com.example.chat.NetworkUtils.Companion.getResponseFromURL
 import com.google.gson.JsonObject
+import io.github.rybalkinsd.kohttp.dsl.httpGet
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
+import java.net.HttpURLConnection
 
 
 class DialogTest( var phone: String ,var c: Context) : DialogFragment() {
@@ -33,50 +42,72 @@ companion object{
     var RESPONSE: String?=null
 }
 
-    class QueryGetCode : AsyncTask<URL, Void, String>() {
-
-        override fun doInBackground(vararg params: URL?): String {
-            Log.e("DialogTest","asynk start: "+ params[0].toString())
-            var response: String? = null
-            try {
-                response = getResponseFromURL(params[0]!!)
-            }catch (e:IOException){
-                e.printStackTrace()
-            }
-            Log.e("DialogTest","response: "+ response.toString())
-
-            return response.toString()
-        }
-
-        override fun onPostExecute(result: String?) {
-
-            Log.e("DialogTest", RESPONSE.toString())
-            var jsonResponse = JSONObject(result)
-            var jsonstatus: String = jsonResponse.getString("response")
-            RESPONSE = jsonstatus
-    }
-    }
-
-
 
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+
         return AlertDialog.Builder(activity!!).setTitle("+7 $phone")
             .setMessage("На указанный номер придет SMS с кодом активации")
             .setPositiveButton("Далее") { dialog, which ->
 
-                var url: URL = generateUrlGetCode("7$phone")
-                Log.e("DialogTest",url.toString())
-                QueryGetCode().execute(url)
 
 
-                val intent: Intent = Intent(c, Code::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
+                var jsonStr: String? = null
+
+                fun nextcode(){
+
+                    val intent = Intent(c, Code::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                }
+
+                fun analysisResponse (status: String){
+                    if (status == "5"){
+                        Log.e("Login status getcode: ", "5")
+                        NUM = "7$phone"
+
+                        nextcode()
+                    }
+                    if(status == "2") {
+                        Log.e("Login status getcode: ", "2")
+                        NUM = "7$phone"
+
+                        nextcode()
+                    }
+                }
+                val job = CoroutineScope(Dispatchers.IO)
+                job.launch {
+
+                    var url: URL = generateUrlGetCode("7$phone")
+                    Log.e("Login url", url.toString())
+                    // val jsonStr = URL(url.toString()).readText()
+                    //var jsonStr: Response = url.toString().httpGet()
+
+
+
+                    var con: HttpURLConnection = url.openConnection() as HttpURLConnection
+
+                    if (con.responseCode == HttpURLConnection.HTTP_OK) {
+                        jsonStr = URL(url.toString()).readText()
+
+                        RESPONSE = jsonStr.toString()
+                        Log.e("Login response: ", jsonStr.toString())
+                        if (jsonStr != null) {
+                            val jsonResponse = JSONObject(jsonStr.toString())
+                            val status: String = jsonResponse.getString("response")
+                            analysisResponse(status)
+                        }
+
+                    } else {
+                        Log.e("Login errors: ", "url не отвечает/nссылка: $url")
+                    }
+
+
+                }
+
             }
             .setNegativeButton("Изменить") { dialog, which ->
-                // TODO Auto-generated method stub
 
             }.show()
     }
@@ -90,4 +121,11 @@ companion object{
             this.context!!, R.color.colorAccent
         ))
     }
+
 }
+
+private fun CoroutineScope.launch(c: Context, block: suspend CoroutineScope.() -> Unit) {
+
+}
+
+
