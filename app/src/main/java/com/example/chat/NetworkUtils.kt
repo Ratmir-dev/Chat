@@ -30,7 +30,7 @@ companion object {
     //_______________________________________________________________________Параметры
     val NUM  = "num"
     val CODE = "code"
-
+   val TOKEN = "token"
 
     fun generateUrlGetCode(num: String): URL {
         val builtUri: Uri =
@@ -59,6 +59,21 @@ companion object {
         }
         return url!!
     }
+    fun generateUrlAllDialogs(token: String): URL {
+        val builtUri: Uri =
+            Uri.parse(API + GET_DIALOGS).buildUpon()
+                .appendQueryParameter(TOKEN, token)
+                .build()
+
+        var url: URL? = null
+        try {
+            url = URL(builtUri.toString())
+        } catch (e: MalformedURLException) {
+            e.printStackTrace()
+        }
+        return url!!
+    }
+
 
     fun getResponseFromURL(url: URL): String? {
         val urlConnection: HttpURLConnection = url.openConnection() as HttpURLConnection

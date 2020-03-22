@@ -2,11 +2,28 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:background="#fff"
     android:layout_height="match_parent">
 
 <ListView
     android:layout_width="match_parent"
     android:id="@+id/dialogs"
     android:layout_height="match_parent"/>
-
+<com.google.android.material.textview.MaterialTextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:text="Нет диалогов"
+    android:visibility="visible"
+    android:id="@+id/no_dialogs"
+    />
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:id="@+id/btn"
+        android:background="#199C9C9C"
+        android:textColor="#000"
+        android:text="Обновить"
+        android:visibility="visible"
+        android:layout_height="wrap_content"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
