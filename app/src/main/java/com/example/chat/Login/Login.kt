@@ -11,6 +11,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.chat.NetworkUtils
 import com.example.chat.R
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -21,11 +23,11 @@ class Login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-            val btn: Button = this.findViewById(R.id.material_text_button)
-            val edt: EditText = findViewById(R.id.tel)
+            val btn: MaterialButton = this.findViewById(R.id.material_text_button)
+            val edt: TextInputEditText = findViewById(R.id.tel)
         btn.setOnClickListener {
             val telsize = edt.text
-            if (telsize.length == 10){
+            if (telsize!!.length == 10){
                 val builder2 = AlertDialog.Builder(this)
                 val builder = AlertDialog.Builder(this)
                 val alert2 = builder2.create()

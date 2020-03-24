@@ -46,6 +46,7 @@ import android.app.NotificationChannel
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.graphics.Color
+import com.google.android.material.button.MaterialButton
 
 import com.example.chat.RecipeAdapter as RecipeAdapter1
 
@@ -70,9 +71,9 @@ class HomeFragment : Fragment() {
      //       textView.text = it
      //   })
         val  token: String = "F7JAH4ZktDduzIx9sBfej2rQ5"
-        val noDialogs: TextView = root.findViewById(R.id.no_dialogs)
+        val noDialogs: MaterialTextView = root.findViewById(R.id.no_dialogs)
         val dialogsList: ListView = root.findViewById(R.id.dialogs)
-        val btn: Button = root.findViewById(R.id.btn)
+        val btn: MaterialButton = root.findViewById(R.id.btn)
         var dialogsArr: JSONArray? = null
 
 

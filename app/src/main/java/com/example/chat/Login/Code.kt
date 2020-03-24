@@ -27,6 +27,7 @@ import com.example.chat.MainActivity
 import com.example.chat.NetworkUtils
 import com.example.chat.R
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.*
 import org.json.JSONObject
@@ -112,13 +113,13 @@ class Code : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_code)
-        val code1:EditText = findViewById(R.id.code1)
-        val code2:EditText = findViewById(R.id.code2)
-        val code3:EditText = findViewById(R.id.code3)
-        val code4:EditText = findViewById(R.id.code4)
-        val btnNext: Button = findViewById(R.id.material_text_button)
-        val btnBack: Button = findViewById(R.id.back)
-        val btnSend: Button = findViewById(R.id.send)
+        val code1: TextInputEditText = findViewById(R.id.code1)
+        val code2:TextInputEditText = findViewById(R.id.code2)
+        val code3:TextInputEditText = findViewById(R.id.code3)
+        val code4:TextInputEditText = findViewById(R.id.code4)
+        val btnNext: MaterialButton = findViewById(R.id.material_text_button)
+        val btnBack: MaterialButton = findViewById(R.id.back)
+        val btnSend: MaterialButton = findViewById(R.id.send)
         val timer: MaterialTextView = findViewById(R.id.timer)
         val timerText: MaterialTextView = findViewById(R.id.timer_text)
         val builder2 = AlertDialog.Builder(this)
@@ -176,11 +177,11 @@ class Code : AppCompatActivity() {
 
                 return true
             }else {
-                code1.setText("")
-                code2.setText("")
-                code3.setText("")
-                code4.setText("")
-              //  code1.requestFocus()
+                code1.clearComposingText()
+                code2.clearComposingText()
+                code3.clearComposingText()
+                code4.clearComposingText()
+                code1.setFocusable(true)
                 Log.e("Code", "check code false")
                 return false
             }
@@ -196,7 +197,7 @@ class Code : AppCompatActivity() {
             return true
         }
 
-        fun analysisResponse(jsonStr: String){
+        fun analysisResponse2(jsonStr: String){
 
             val jsonResponse = JSONObject(jsonStr)
             val jsonstatus: String = jsonResponse.getString("response")
@@ -237,7 +238,7 @@ class Code : AppCompatActivity() {
 
                        val status: Deferred<String> = async{jsonStr}
 
-                       analysisResponse(status.await())
+                       analysisResponse2(status.await())
 
 
 
