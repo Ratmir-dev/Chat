@@ -23,7 +23,7 @@ class Login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-            val btn: MaterialButton = this.findViewById(R.id.material_text_button)
+            val btn: MaterialButton = findViewById(R.id.material_text_button)
             val edt: TextInputEditText = findViewById(R.id.tel)
         btn.setOnClickListener {
             val telsize = edt.text
