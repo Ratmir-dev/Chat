@@ -123,7 +123,6 @@ class Code : AppCompatActivity() {
         val timer: MaterialTextView = findViewById(R.id.timer)
         val timerText: MaterialTextView = findViewById(R.id.timer_text)
         val builder2 = AlertDialog.Builder(this)
-        val alert2 = builder2.create()
 
 
         btnSend.visibility = View.INVISIBLE
@@ -218,10 +217,6 @@ class Code : AppCompatActivity() {
            if( checkForEmpty(code1.text.toString(),code2.text.toString(),code3.text.toString(),code4.text.toString())){
 
 
-               builder2.show()
-               if (alert2.isShowing) {
-                   alert2.cancel()
-               }
                    val job = CoroutineScope(Dispatchers.IO)
                    job.launch {
 
