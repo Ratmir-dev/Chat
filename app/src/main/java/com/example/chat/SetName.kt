@@ -9,7 +9,6 @@ class SetName: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setname)
-        val userName: TextInputLayout = findViewById(R.id.userName)
         val btnNext: MaterialButton = findViewById(R.id.material_next_button)
     }
 

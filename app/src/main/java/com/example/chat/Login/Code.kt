@@ -35,6 +35,7 @@ import java.io.IOException
 import java.net.URL
 
 
+@Suppress("DEPRECATION")
 class Code : AppCompatActivity() {
 
 
@@ -140,7 +141,7 @@ class Code : AppCompatActivity() {
             timer.visibility = View.VISIBLE
             timerText.visibility = View.VISIBLE
             Toast.makeText(this, "Отправлено", Toast.LENGTH_SHORT).show()
-            object: CountDownTimer(300000,1000){
+            object: CountDownTimer(24000,1000){
                 override fun onFinish() {
                     btnSend.visibility = View.VISIBLE
                 }
@@ -206,6 +207,12 @@ class Code : AppCompatActivity() {
 
             if (checkCode()) {
                 TOKEN = jsonResponse.getString("token")
+                val dbon: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+                val  db: SharedPreferences.Editor = dbon.edit()
+                db.putString("AUTO", "1")
+                db.putString("TOKEN", TOKEN)
+                db.apply()
+
                 startNext()
                 Log.e("Code", "next")
             }

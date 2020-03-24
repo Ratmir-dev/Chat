@@ -56,6 +56,7 @@ class HomeFragment : Fragment() {
 
     companion object{
         var COUNT_DIALOGS: Int? = null
+        var STEP:JSONArray? = null
     }
 
     override fun onCreateView(
@@ -84,16 +85,22 @@ class HomeFragment : Fragment() {
 
 
         @UiThread
-        fun ad(){
+        fun ad() {
 
-            if(dialogsArr !=null){
-            val adapter = RecipeAdapter1(getContext(),dialogsArr!!)
-                btn.visibility = INVISIBLE
-            dialogsList.adapter = adapter}else{
-                btn.visibility = VISIBLE
-            }
+            if (dialogsArr != null) {
+
+                    val adapter = RecipeAdapter1(getContext(), dialogsArr!!)
+
+                    Log.e("HomeFragment ad()   ",STEP.toString())
+                    Log.e("HomeFragment ad()   ",dialogsArr.toString())
+                    btn.visibility = INVISIBLE
+                    dialogsList.adapter = adapter
+
+            } else {
+                    btn.visibility = VISIBLE
+                }
+
         }
-
 
 
 
@@ -108,11 +115,9 @@ fun downloadDialogs() {
         if (jsonStr != "null") {
             Log.e("Code.btnnext ", jsonStr)
             val jsonResponse = JSONObject(jsonStr)
-            var ob =
-                jsonResponse.getJSONObject("Error")         //хранятся response и text       "Error":{"response":"1","text":"Ok"}
-            var dialogs =
-                jsonResponse.getJSONObject("dialogs")   // хранятся count и dialogs   "dialogs":{"count":2,"dialogs":{"1":{"unread":1,"number":1,"sub":"88005553535","name":"Андрей","lastname":"Хуеротов","mess":"запрос14","photo":"https://avatars.mds.yandex.net/get-pdb/1381440/2becdede-c4c2-4e6c-9b3d-05d5ae7e0409/s1200?webp=false","date":"2020-02-21 17:31:57"},"2":{"unread":3,"number":2,"sub":"89380794324","name":"Adam","lastname":"Amirbekov","mess":"запрос15","photo":"https://avatars.mds.yandex.net/get-pdb/938499/bb3e5208-82ad-48bd-a3be-a40a666132e4/s1200?webp=false","date":"2020-02-23 07:36:52"}}}}
-            //                            "dialogs":{"count":0,"dialogs":{"null"}}
+            var ob = jsonResponse.getJSONObject("Error")         //хранятся response и text       "Error":{"response":"1","text":"Ok"}
+            var dialogs = jsonResponse.getJSONObject("dialogs")   // хранятся count и dialogs   "dialogs":{"count":2,"dialogs":{"1":{"unread":1,"number":1,"sub":"88005553535","name":"Андрей","lastname":"Хуеротов","mess":"запрос14","photo":"https://avatars.mds.yandex.net/get-pdb/1381440/2becdede-c4c2-4e6c-9b3d-05d5ae7e0409/s1200?webp=false","date":"2020-02-21 17:31:57"},"2":{"unread":3,"number":2,"sub":"89380794324","name":"Adam","lastname":"Amirbekov","mess":"запрос15","photo":"https://avatars.mds.yandex.net/get-pdb/938499/bb3e5208-82ad-48bd-a3be-a40a666132e4/s1200?webp=false","date":"2020-02-23 07:36:52"}}}}
+                                                                                    //                            "dialogs":{"count":0,"dialogs":{"null"}}
 
             var response = ob.getString("response")
             if (response == "1") {
@@ -137,7 +142,10 @@ fun downloadDialogs() {
 
         mainHandler.post(object : Runnable {
             override fun run() {
+                if (STEP.toString() != dialogsArr.toString()) {
                 ad()
+                    STEP = dialogsArr}
+
                 downloadDialogs()
                 mainHandler.postDelayed(this, 1000)
             }

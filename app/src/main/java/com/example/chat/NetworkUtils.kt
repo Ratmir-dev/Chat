@@ -26,12 +26,13 @@ companion object {
     val SEND_MESS   = "sendmess"
     val GET_MESS    = "getmess"
     val GET_DIALOGS = "alldialogs"
+    val ACC_INFO    = "getaccountinfo"
 
     //_______________________________________________________________________Параметры
-    val NUM  = "num"
-    val CODE = "code"
-   val TOKEN = "token"
-
+    val NUM     = "num"
+    val CODE    = "code"
+    val TOKEN   = "token"
+    val MESSAGE = "mess"
     fun generateUrlGetCode(num: String): URL {
         val builtUri: Uri =
             Uri.parse(API + GET_CODE).buildUpon().appendQueryParameter(NUM, num).build()
@@ -64,6 +65,20 @@ companion object {
             Uri.parse(API + GET_DIALOGS).buildUpon()
                 .appendQueryParameter(TOKEN, token)
                 .build()
+
+        var url: URL? = null
+        try {
+            url = URL(builtUri.toString())
+        } catch (e: MalformedURLException) {
+            e.printStackTrace()
+        }
+        return url!!
+    }
+
+    fun generateUrlGetAccountInfo(token: String): URL {
+        val builtUri: Uri =
+            Uri.parse(API + ACC_INFO).buildUpon()
+                .appendQueryParameter(TOKEN, token).build()
 
         var url: URL? = null
         try {
