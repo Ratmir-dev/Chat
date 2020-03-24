@@ -29,7 +29,7 @@ class Login : AppCompatActivity() {
                 val builder2 = AlertDialog.Builder(this)
                 val builder = AlertDialog.Builder(this)
                 val alert2 = builder2.create()
-
+                builder2.setCancelable(false)
                 val mDialogView = LayoutInflater.from(this).inflate(R.layout.alertdialog, null)
                 builder.setTitle("+7 $telsize")
                 builder.setMessage("На указанный номер придет SMS с кодом активации")
@@ -49,9 +49,6 @@ class Login : AppCompatActivity() {
                     }
 
                      fun analysisResponse (status: String){
-                        if (alert2.isShowing) {
-                          alert2.dismiss()
-                        }
                         if (status == "5"){
                             Log.e("Login status getcode: ", "5")
                             Code.NUM = "7$telsize"
@@ -87,7 +84,7 @@ class Login : AppCompatActivity() {
                             if (jsonStr != null) {
                                 val jsonResponse = JSONObject(jsonStr.toString())
                                 val status: Deferred<String> = async{jsonResponse.getString("response")}
-                               // delay(20000)
+                                //delay(20000)
                                 analysisResponse(status.await())
                             }
 
