@@ -19,6 +19,7 @@ import android.view.KeyEvent.KEYCODE_DEL
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import com.example.chat.DialogList
@@ -27,9 +28,7 @@ import com.example.chat.NetworkUtils
 import com.example.chat.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.io.IOException
 import java.net.URL
@@ -122,6 +121,10 @@ class Code : AppCompatActivity() {
         val btnSend: Button = findViewById(R.id.send)
         val timer: MaterialTextView = findViewById(R.id.timer)
         val timerText: MaterialTextView = findViewById(R.id.timer_text)
+        val builder2 = AlertDialog.Builder(this)
+        val alert2 = builder2.create()
+
+
         btnSend.visibility = View.INVISIBLE
         code1.requestFocus()
 
@@ -193,13 +196,34 @@ class Code : AppCompatActivity() {
             return true
         }
 
+        fun analysisResponse(jsonStr: String){
+
+            val jsonResponse = JSONObject(jsonStr)
+            val jsonstatus: String = jsonResponse.getString("response")
+
+            RESPONSE_CODE = jsonstatus
+            Log.e("Code", "RESPONSE CODE: "+RESPONSE_CODE.toString())
+
+            if (checkCode()) {
+                TOKEN = jsonResponse.getString("token")
+                startNext()
+                Log.e("Code", "next")
+            }
+
+        }
+
+
         btnNext.setOnClickListener {
            if( checkForEmpty(code1.text.toString(),code2.text.toString(),code3.text.toString(),code4.text.toString())){
 
 
-
+               builder2.show()
+               if (alert2.isShowing) {
+                   alert2.cancel()
+               }
                    val job = CoroutineScope(Dispatchers.IO)
                    job.launch {
+
                        val code = code1.text.toString() + code2.text.toString() + code3.text.toString() + code4.text.toString()
                        Log.e("Code params in url", NUM+code)
                        val url = NetworkUtils.generateUrlCheckCode(NUM!!,code)
@@ -207,17 +231,18 @@ class Code : AppCompatActivity() {
                        val jsonStr = URL(url.toString()).readText()
                        Log.e("Code.btnnext ", jsonStr)
 
-                       RESPONSE_CODE = jsonStr
-                       val jsonResponse = JSONObject(jsonStr)
-                       val jsonstatus: String = jsonResponse.getString("response")
 
-                       RESPONSE_CODE = jsonstatus
-                       Log.e("Code", "RESPONSE CODE: "+RESPONSE_CODE.toString())
-                       if (checkCode()) {
-                           TOKEN = jsonResponse.getString("token")
-                           startNext()
-                           Log.e("Code", "next")
-                       }
+
+                       RESPONSE_CODE = jsonStr
+
+                       val status: Deferred<String> = async{jsonStr}
+
+                       analysisResponse(status.await())
+
+
+
+
+
                    }
 
 

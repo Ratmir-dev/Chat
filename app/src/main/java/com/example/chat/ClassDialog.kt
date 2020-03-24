@@ -22,7 +22,7 @@ class ClassDialog (var nameD: String, var messD: String, var timeD: String,var c
 class RecipeAdapter(private val context: Context?,
                              private val dataSource: JSONArray) : BaseAdapter() {
 
-    private val inflater: LayoutInflater = context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+//    private val inflater: LayoutInflater = context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
     //1
     override fun getCount(): Int {
