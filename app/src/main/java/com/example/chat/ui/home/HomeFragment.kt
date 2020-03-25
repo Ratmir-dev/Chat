@@ -123,6 +123,7 @@ fun downloadDialogs() {
             if (response == "1") {
                 if (dialogs.getString("count") == "0") {
                     noDialogs.visibility = VISIBLE
+                    btn.visibility = INVISIBLE
                 } else {
                     noDialogs.visibility = INVISIBLE
                     val dialogsArr2 = dialogs.getJSONArray("dialogs")
