@@ -35,15 +35,16 @@
         <activity
             android:name=".MainActivity"
             android:label="Telegram"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".SplashActivity"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/SplashTheme">
         </activity>
     </application>
 

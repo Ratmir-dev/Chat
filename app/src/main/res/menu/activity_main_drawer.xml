@@ -24,5 +24,10 @@
             android:id="@+id/nav_share"
             android:icon="@drawable/help"
             android:title="@string/menu_share" />
+        <item
+            android:onClick="exit"
+            android:id="@+id/nav_exit"
+            android:icon="@drawable/help"
+            android:title="Выйти" />
     </group>
 </menu>
