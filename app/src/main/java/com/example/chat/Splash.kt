@@ -112,7 +112,9 @@ class SplashActivity : AppCompatActivity() {
 
 
         }
+
         val job2 = CoroutineScope(Dispatchers.IO)
+
         job2.launch {
             val status3: Deferred<String> = async { token!! }
             val status2: Deferred<String> = async { auto!! }

@@ -21,7 +21,6 @@ companion object {
     val API         = "http://eclipsedevelop.ru/api.php/"
     val GET_CODE    = "getcode"
     val CHECK_CODE  = "checkcode"
-    val SET_NAME    = "setname"
     val SET_NICK    = "setnick"
     val SEND_MESS   = "sendmess"
     val GET_MESS    = "getmess"
@@ -33,6 +32,7 @@ companion object {
     val CODE    = "code"
     val TOKEN   = "token"
     val MESSAGE = "mess"
+    val NICK    = "nick"
     fun generateUrlGetCode(num: String): URL {
         val builtUri: Uri =
             Uri.parse(API + GET_CODE).buildUpon().appendQueryParameter(NUM, num).build()
@@ -89,26 +89,39 @@ companion object {
         return url!!
     }
 
+    fun generateUrlSetNick(token: String, nick: String): URL {
+        val builtUri: Uri =
+            Uri.parse(API + SET_NICK).buildUpon()
+                .appendQueryParameter(NICK, nick)
+                .appendQueryParameter(TOKEN, token)
+                .build()
+        var url: URL? = null
+        try {
+            url = URL(builtUri.toString())
+        } catch (e: MalformedURLException) {
+            e.printStackTrace()
+        }
+        return url!!
+    }
+
+
+    //____________________________________________________________________________________________
 
     fun getResponseFromURL(url: URL): String? {
         val urlConnection: HttpURLConnection = url.openConnection() as HttpURLConnection
         Log.e("getResponseFromUrl", "urlConnction: $urlConnection")
-
         var inp: InputStream = urlConnection.inputStream
         Log.e("getResponseFromUrl", "inp: $inp")
         val scanner: Scanner = Scanner(inp)
-
         scanner.useDelimiter("\\A")
-
         val hasInput: Boolean = scanner.hasNext()
         urlConnection.disconnect()
         if (hasInput) {
             return scanner.next()
         } else {
             return null.toString()
-
-
+        }
     }
-
-
-}}}
+    //_____________________________________________________________________________________________
+}
+}
