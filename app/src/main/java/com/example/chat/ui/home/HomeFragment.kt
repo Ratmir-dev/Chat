@@ -46,6 +46,7 @@ import android.app.NotificationChannel
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.graphics.Color
+import com.example.chat.SplashActivity
 import com.google.android.material.button.MaterialButton
 
 import com.example.chat.RecipeAdapter as RecipeAdapter1
@@ -71,7 +72,7 @@ class HomeFragment : Fragment() {
       //  homeViewModel.text.observe(this, Observer {
      //       textView.text = it
      //   })
-        val  token: String = "F7JAH4ZktDduzIx9sBfej2rQ5"
+        val token: String = SplashActivity.TOKEN.toString()
         val noDialogs: MaterialTextView = root.findViewById(R.id.no_dialogs)
         val dialogsList: ListView = root.findViewById(R.id.dialogs)
         val btn: MaterialButton = root.findViewById(R.id.btn)
@@ -110,10 +111,10 @@ fun downloadDialogs() {
 
 
         val url = NetworkUtils.generateUrlAllDialogs(token)
-        Log.e("Code ", url.toString())
+        Log.e("Home ", url.toString())
         val jsonStr = URL(url.toString()).readText()
         if (jsonStr != "null") {
-            Log.e("Code.btnnext ", jsonStr)
+            Log.e("Home.btnnext ", jsonStr)
             val jsonResponse = JSONObject(jsonStr)
             var ob = jsonResponse.getJSONObject("Error")         //хранятся response и text       "Error":{"response":"1","text":"Ok"}
             var dialogs = jsonResponse.getJSONObject("dialogs")   // хранятся count и dialogs   "dialogs":{"count":2,"dialogs":{"1":{"unread":1,"number":1,"sub":"88005553535","name":"Андрей","lastname":"Хуеротов","mess":"запрос14","photo":"https://avatars.mds.yandex.net/get-pdb/1381440/2becdede-c4c2-4e6c-9b3d-05d5ae7e0409/s1200?webp=false","date":"2020-02-21 17:31:57"},"2":{"unread":3,"number":2,"sub":"89380794324","name":"Adam","lastname":"Amirbekov","mess":"запрос15","photo":"https://avatars.mds.yandex.net/get-pdb/938499/bb3e5208-82ad-48bd-a3be-a40a666132e4/s1200?webp=false","date":"2020-02-23 07:36:52"}}}}

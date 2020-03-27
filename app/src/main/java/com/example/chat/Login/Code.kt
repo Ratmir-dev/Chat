@@ -22,10 +22,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
-import com.example.chat.DialogList
-import com.example.chat.MainActivity
-import com.example.chat.NetworkUtils
-import com.example.chat.R
+import com.example.chat.*
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textview.MaterialTextView
@@ -58,7 +55,7 @@ class Code : AppCompatActivity() {
 
 
 
-        val intent: Intent = Intent(this,MainActivity::class.java)
+        val intent: Intent = Intent(this,SplashActivity::class.java)
         intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
@@ -197,28 +194,9 @@ class Code : AppCompatActivity() {
             return true
         }
 
-        fun analysisResponse2(jsonStr: String){
 
-            val jsonResponse = JSONObject(jsonStr)
-            val jsonstatus: String = jsonResponse.getString("response")
-
-            RESPONSE_CODE = jsonstatus
-            Log.e("Code", "RESPONSE CODE: "+RESPONSE_CODE.toString())
-
-            if (checkCode()) {
-                TOKEN = jsonResponse.getString("token")
-                val dbon: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-                val  db: SharedPreferences.Editor = dbon.edit()
-                db.putString("AUTO", "1")
-                db.putString("TOKEN", TOKEN)
-                db.apply()
-
-                startNext()
-                Log.e("Code", "next")
-            }
-
-        }
-
+        val dbon: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val  db: SharedPreferences.Editor = dbon.edit()
 
         btnNext.setOnClickListener {
            if( checkForEmpty(code1.text.toString(),code2.text.toString(),code3.text.toString(),code4.text.toString())){
@@ -227,8 +205,30 @@ class Code : AppCompatActivity() {
                    val job = CoroutineScope(Dispatchers.IO)
                    job.launch {
 
+                       fun analysisResponse2(jsonStr: String){
+
+                           val jsonResponse = JSONObject(jsonStr)
+                           val jsonstatus: String = jsonResponse.getString("response")
+
+                           RESPONSE_CODE = jsonstatus
+                           Log.e("Code", "RESPONSE CODE: "+RESPONSE_CODE.toString())
+
+                           if (checkCode()) {
+                               TOKEN = jsonResponse.getString("token")
+
+                               db.putString("AUTO", "1")
+                               db.putString("TOKEN", TOKEN)
+                               db.apply()
+
+                               startNext()
+                               Log.e("Code", "next")
+                           }
+
+                       }
+
+
                        val code = code1.text.toString() + code2.text.toString() + code3.text.toString() + code4.text.toString()
-                       Log.e("Code params in url", NUM+code)
+                       Log.e("Code params in url", NUM+" "+code)
                        val url = NetworkUtils.generateUrlCheckCode(NUM!!,code)
                        Log.e("Code ", url.toString())
                        val jsonStr = URL(url.toString()).readText()

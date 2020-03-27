@@ -1,8 +1,10 @@
 package com.example.chat.Login
 
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
@@ -23,6 +25,7 @@ class Login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
             val btn: MaterialButton = findViewById(R.id.material_text_button)
             val edt: TextInputEditText = findViewById(R.id.tel)
         btn.setOnClickListener {

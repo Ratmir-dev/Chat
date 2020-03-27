@@ -17,7 +17,9 @@ import java.net.URL
 
 @Suppress("DEPRECATION")
 class SplashActivity : AppCompatActivity() {
-
+companion object{
+    var TOKEN: String? = null
+}
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -32,9 +34,11 @@ class SplashActivity : AppCompatActivity() {
 
         fun startAct(i:Int){
             if(i == 1){
+                TOKEN = token
                 val intent: Intent = Intent(this,MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
+
             }
             if(i == 7){
                 val intent = Intent(this, Login::class.java)
@@ -62,34 +66,32 @@ class SplashActivity : AppCompatActivity() {
             {
                 Log.e("Splash method: ", "token ok")
                 if(auto == "unknown"){
-                    Log.e("Splash method: ", "AUTO false")
+                    Log.e("Splash method: ", "AUTO unknown")
                     val intent = Intent(this, Login::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
-                }else{
+                }else {
+                    if(auto == "1"){
+                        Log.e("Splash method: ", "AUTO finded")
+                        val job = CoroutineScope(Dispatchers.IO)
+                        job.launch {
 
-                    Log.e("Splash method: ", "AUTO true")
-                    val job = CoroutineScope(Dispatchers.IO)
-                    job.launch {
-
-                        fun analysisResponse3(res: String){
-                            Log.e("Splash res ", res)
-                            if(res != NULL) {
-                                val jsonResponse = JSONObject(res)
-                                val jsonstatus: String = jsonResponse.getString("response")
-                                if (jsonstatus == "1") {
-                                    startAct(1)
-                                } else
-                                    if (jsonstatus == "7") {
-                                        startAct(7)
+                         fun analysisResponse3(res: String) {
+                              Log.e("Splash res ", res)
+                                if (res != NULL) {
+                                    val jsonResponse = JSONObject(res)
+                                    val jsonstatus: String = jsonResponse.getString("response")
+                                    if (jsonstatus == "1") {
+                                        startAct(1)
                                     } else
-                                        if (jsonstatus == "8") {
-                                            startAct(8)
-                                        }
-                            }
-
-                        }
-
+                                        if (jsonstatus == "7") {
+                                            startAct(7)
+                                        } else
+                                            if (jsonstatus == "8") {
+                                                startAct(8)
+                                            }
+                                }
+                         }
 
 
                         val url = NetworkUtils.generateUrlGetAccountInfo(token!!)
@@ -97,14 +99,15 @@ class SplashActivity : AppCompatActivity() {
                         val jsonStr = URL(url.toString()).readText()
 
 
-
-                        val status: Deferred<String> = async{jsonStr}
+                        val status: Deferred<String> = async { jsonStr }
 
                         analysisResponse3(status.await())
 
                     }
 
-
+                }
+                    else
+                        startAct(7)
                 }
 
 

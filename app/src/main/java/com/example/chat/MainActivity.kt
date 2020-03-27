@@ -1,5 +1,6 @@
 package com.example.chat
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -24,16 +25,14 @@ import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.preference.PreferenceManager
+import com.example.chat.Login.Login
 
 
-
-
-
-
-
-
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity(){
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -71,8 +70,18 @@ class MainActivity : AppCompatActivity(){
        // menuInflater.inflate(R.menu.main, menu)
         return true
     }
+    @SuppressLint("CommitPrefEdits")
     fun exit(item: MenuItem){
-        Toast.makeText(this, "Че происходит при выходе", Toast.LENGTH_SHORT).show()
+
+        val dbon: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val  db: SharedPreferences.Editor = dbon.edit()
+        db.putString("AUTO", "0")
+        db.apply()
+
+        val intent: Intent = Intent(this,Login::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        //Toast.makeText(this, "Че происходит при выходе", Toast.LENGTH_SHORT).show()
     }
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
