@@ -4,12 +4,21 @@
     android:layout_width="match_parent"
     android:background="#fff"
     android:layout_height="match_parent">
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:id="@+id/dialogs_layout"
+        android:background="#fff"
+        android:layout_height="match_parent"
+        >
 
-<ListView
-    android:layout_width="match_parent"
-    android:id="@+id/dialogs"
-    android:layout_height="match_parent"/>
-<com.google.android.material.textview.MaterialTextView
+        <ListView
+            android:id="@+id/dialogs"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_anchor="@+id/btn"
+            app:layout_anchorGravity="center" />
+
+        <com.google.android.material.textview.MaterialTextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -26,4 +35,96 @@
         android:text="Обновить"
         android:visibility="visible"
         android:layout_height="wrap_content"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+
+
+
+
+    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/dialog_layout">
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <ImageButton
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dialog_back"
+                android:src="@drawable/ic_back">
+            </ImageButton>
+            <LinearLayout
+                android:layout_weight="10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_gravity="center"
+                    android:id="@+id/dialog_name"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Имя Фамилия">
+                </com.google.android.material.textview.MaterialTextView>
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_gravity="center"
+                    android:layout_marginRight="28dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="был(а) в "
+                    android:textSize="10dp">
+                </com.google.android.material.textview.MaterialTextView>
+            </LinearLayout>
+            <ImageButton
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_stat_name">
+            </ImageButton>
+        </LinearLayout>
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/dialog_mess"
+            android:layout_weight="15"
+            android:stackFromBottom="true"
+            android:transcriptMode="alwaysScroll"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/send_text"
+                android:layout_weight="3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="">
+
+            </EditText>
+
+            <ImageButton
+                android:id="@+id/send_btn"
+                android:layout_weight="1"
+                android:layout_width="106dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_menu_send"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

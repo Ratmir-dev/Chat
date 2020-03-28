@@ -85,6 +85,11 @@
                             android:layout_height="wrap_content"/>
                     </LinearLayout>
                 </LinearLayout>
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="70dp"
+                    android:text="15:15"
+                    android:id="@+id/num"
+                    android:layout_height="wrap_content"/>
 
 
             </LinearLayout>

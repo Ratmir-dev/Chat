@@ -74,7 +74,6 @@ companion object {
         }
         return url!!
     }
-
     fun generateUrlGetAccountInfo(token: String): URL {
         val builtUri: Uri =
             Uri.parse(API + ACC_INFO).buildUpon()
@@ -88,7 +87,6 @@ companion object {
         }
         return url!!
     }
-
     fun generateUrlSetNick(token: String, nick: String): URL {
         val builtUri: Uri =
             Uri.parse(API + SET_NICK).buildUpon()
@@ -103,7 +101,36 @@ companion object {
         }
         return url!!
     }
+    fun generateUrlGetMess(token: String, num: String): URL {
+        val builtUri: Uri =
+            Uri.parse(API + GET_MESS).buildUpon()
+                .appendQueryParameter(NUM, num)
+                .appendQueryParameter(TOKEN, token)
+                .build()
+        var url: URL? = null
+        try {
+            url = URL(builtUri.toString())
+        } catch (e: MalformedURLException) {
+            e.printStackTrace()
+        }
+        return url!!
+    }
 
+    fun generateUrlSendMess(token: String, num: String, mess: String): URL {
+        val builtUri: Uri =
+            Uri.parse(API + SEND_MESS).buildUpon()
+                .appendQueryParameter(NUM, num)
+                .appendQueryParameter(TOKEN, token)
+                .appendQueryParameter(MESSAGE, mess)
+                .build()
+        var url: URL? = null
+        try {
+            url = URL(builtUri.toString())
+        } catch (e: MalformedURLException) {
+            e.printStackTrace()
+        }
+        return url!!
+    }
 
     //____________________________________________________________________________________________
 

@@ -29,6 +29,11 @@ import android.content.SharedPreferences
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.preference.PreferenceManager
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
+import android.widget.LinearLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.isVisible
 import com.example.chat.Login.Login
 
 
@@ -45,6 +50,7 @@ class MainActivity : AppCompatActivity(){
 
 
         val fab: FloatingActionButton = findViewById(R.id.fab)
+        fab.visibility = INVISIBLE
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
@@ -62,6 +68,18 @@ class MainActivity : AppCompatActivity(){
         navView.setupWithNavController(navController)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
+
+    }
+    fun ok ():Boolean{
+        val dialogsLayout: CoordinatorLayout = findViewById(R.id.dialogs_layout)
+        val dialogLayout: LinearLayout = findViewById(R.id.dialog_layout)
+        if(dialogLayout.isVisible){
+            dialogLayout.visibility = INVISIBLE
+            dialogsLayout.visibility = VISIBLE
+            return false
+        }else{
+            return true
+        }
 
     }
 
@@ -88,4 +106,9 @@ class MainActivity : AppCompatActivity(){
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
+    override  fun onBackPressed() {
+        if(ok()){
+            super.onBackPressed()
+        }
+    }
 }

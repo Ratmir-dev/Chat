@@ -54,12 +54,15 @@ class RecipeAdapter(private val context: Context?,
         val timeD = rowView2.findViewById(R.id.time_d) as TextView
         val countD = rowView2.findViewById(R.id.count_d) as TextView
         val messD = rowView2.findViewById(R.id.mess_d) as TextView
+        val numu = rowView2.findViewById(R.id.num) as TextView
+
         val imageD = rowView2.findViewById(R.id.image_d) as ImageView
 Log.e("Adapter Dialogs","ok $position")
         // 1
         val dialogD = getItem(position) as JSONObject
 // 2
-        nameD.text = dialogD.getString("name")+" "+dialogD.getString("lastname")
+        val userNumber = dialogD.getString("sub")
+        nameD.text = dialogD.getString("name")
         timeD.text = "12:00"//dialogD.getString("date")
         if(dialogD.getString("unread") == "0") {
             countD.visibility = INVISIBLE
@@ -67,7 +70,8 @@ Log.e("Adapter Dialogs","ok $position")
             countD.text = "  "+dialogD.getString("unread")+"  "
         }
         messD.text = dialogD.getString("mess")
-
+        numu.text = userNumber
+        numu.visibility = INVISIBLE
 
 // 3
         Picasso.get() .load(dialogD.getString("photo").toUri()) .resize(50, 50) .centerCrop() .into(imageD)
