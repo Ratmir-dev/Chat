@@ -42,6 +42,7 @@ import android.content.Context.NOTIFICATION_SERVICE
 import android.graphics.Color
 import android.widget.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.os.postDelayed
 import androidx.core.view.get
 import com.example.chat.*
 import com.google.android.material.button.MaterialButton
@@ -57,6 +58,7 @@ class HomeFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
 
     companion object {
+        var PAUSE:Int = 1000
         var COUNT_DIALOGS: Int? = null
         var COUNT_MESS: Int? = null
         var STEP: JSONArray? = null
@@ -92,8 +94,6 @@ class HomeFragment : Fragment() {
         var dialogsArr: JSONArray? = null
         var messArr: JSONArray? = null
         val job = CoroutineScope(Dispatchers.IO)
-        var nostatus: Int? = null
-
 
         val NOTIFY_ID: Int = 100;
         val notificationIntent = Intent(context, HomeFragment::class.java)
@@ -134,13 +134,10 @@ class HomeFragment : Fragment() {
 
                 Log.e("HomeFragment ad()   ", STEP.toString())
                 Log.e("HomeFragment ad()   ", dialogsArr.toString())
-
                 btn.visibility = INVISIBLE
                 dialogsList.adapter = adapter
 
-
             } else {
-                if(nostatus!= 0)
                 btn.visibility = VISIBLE
             }
 
@@ -179,16 +176,6 @@ class HomeFragment : Fragment() {
 
         }
 
-        fun noDialogs(status:Int){
-            if (status == 0) {
-                noDialogs.visibility = VISIBLE
-                btn.visibility = INVISIBLE
-            } else {
-                noDialogs.visibility = INVISIBLE
-                noDialogs.visibility =INVISIBLE
-
-            }
-        }
         fun downloadMassage(sub: String) {
 
             job.launch {
@@ -209,9 +196,10 @@ class HomeFragment : Fragment() {
                     var response = ob.getString("response")
                     if (response == "1") {
                         if (messageU.getString("count") == "0") {
-                            nostatus = 0
+                            noDialogs.visibility = VISIBLE
+                            btn.visibility = INVISIBLE
                         } else {
-                            nostatus = 1
+                            noDialogs.visibility = INVISIBLE
                             val messArr2 = messageU.getJSONArray("messages")
                             COUNT_MESS = messageU.getInt("count")
                             messArr = messArr2
@@ -245,8 +233,6 @@ class HomeFragment : Fragment() {
 
         fun downloadDialogs() {
             job.launch {
-
-
                 val url = NetworkUtils.generateUrlAllDialogs(token)
                 Log.e("Home ", url.toString())
                 val jsonStr = URL(url.toString()).readText()
@@ -262,24 +248,24 @@ class HomeFragment : Fragment() {
                     var response = ob.getString("response")
                     if (response == "1") {
                         if (dialogs.getString("count") == "0") {
-                            nostatus = 0
+                            noDialogs.visibility = VISIBLE
+                            btn.visibility = INVISIBLE
                         } else {
-                            nostatus = 1
+                            noDialogs.visibility = INVISIBLE
                             val dialogsArr2 = dialogs.getJSONArray("dialogs")
                             COUNT_DIALOGS = dialogs.getInt("count")
                             dialogsArr = dialogsArr2
-
 
                         }
                     }
                 }
             }
         }
-
                     val mainHandler = Handler(Looper.getMainLooper())
 
                     mainHandler.post(object : Runnable {
                         override fun run() {
+
 
                             if (dialogLayout.isVisible) {
                                 if (STEPMESS.toString() != messArr.toString()) {
@@ -288,15 +274,16 @@ class HomeFragment : Fragment() {
                                 }
                                 downloadMassage(openDialog!!)
                             } else {
-                                downloadDialogs()
-                                if (STEP.toString() != dialogsArr.toString()) {
-                                    nostatus?.let { noDialogs(0) }
-                                    ad()
-                                    STEP = dialogsArr
+                                if (dialogsLayout.isVisible) {
+                                    downloadDialogs()
+                                    if (STEP.toString() != dialogsArr.toString()) {
+                                        ad()
+                                        STEP = dialogsArr
+                                    }
                                 }
                             }
 
-                            mainHandler.postDelayed(this, 1000)
+                            mainHandler.postDelayed(this, PAUSE.toLong())
                         }
                     })
 
@@ -312,5 +299,14 @@ class HomeFragment : Fragment() {
                     return root
                 }
 
+    override fun onStop() {
+        super.onStop()
+        PAUSE = 1000000000
+    }
+
+    override fun onStart() {
+        super.onStart()
+        PAUSE = 1000
+    }
             }
 

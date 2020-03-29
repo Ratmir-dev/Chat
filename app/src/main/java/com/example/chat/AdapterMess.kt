@@ -41,7 +41,7 @@ class AdapterMess (private val context: Context?,
         val inflater = context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         val rowView2: View = inflater.inflate(R.layout.mess, parent, false) as View
-        val mess = rowView2.findViewById(R.id.mess) as TextView
+        val mess = rowView2.findViewById(R.id.getter) as TextView
         Log.e("Adapter Mess","ok $position")
 
         val messD = getItem(position) as JSONObject
