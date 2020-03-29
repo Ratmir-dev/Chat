@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.core.view.GravityCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import androidx.core.app.ComponentActivity.ExtraData
@@ -29,12 +28,15 @@ import android.content.SharedPreferences
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.preference.PreferenceManager
+import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.widget.LinearLayout
+import android.widget.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import com.example.chat.Login.Login
+import com.squareup.picasso.Picasso
 
 
 @Suppress("DEPRECATION")
@@ -47,6 +49,22 @@ class MainActivity : AppCompatActivity(){
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+        val navigationView:NavigationView = findViewById(R.id.nav_view)
+        val myBase: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val db:SharedPreferences.Editor = myBase.edit()
+        val dbon: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+        val headerlayout = navigationView.inflateHeaderView(R.layout.nav_header_main)
+        val name: String? = dbon.getString("name", "unknown")
+        val num: String? = dbon.getString("num","unknown")
+        val photo: String? = dbon.getString("photo","unknown")
+        val namesuka: TextView = headerlayout.findViewById(R.id.namesuka)
+        val numsuka: TextView = headerlayout.findViewById(R.id.numsuka)
+        val photosuka: ImageView = headerlayout.findViewById(R.id.photosuka)
+        Picasso.get() .load(photo!!.toUri()) .resize(50, 50) .centerCrop() .into(photosuka)
+
+        namesuka.text = name
+        numsuka.text = num
 
 
         val fab: FloatingActionButton = findViewById(R.id.fab)
