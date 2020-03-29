@@ -3,7 +3,6 @@ package com.example.chat
 import android.net.Uri
 import android.os.Build
 import android.util.Log
-import com.example.chat.Login.DialogTest
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader

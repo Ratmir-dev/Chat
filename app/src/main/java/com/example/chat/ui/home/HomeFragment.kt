@@ -92,6 +92,8 @@ class HomeFragment : Fragment() {
         var dialogsArr: JSONArray? = null
         var messArr: JSONArray? = null
         val job = CoroutineScope(Dispatchers.IO)
+        var nostatus: Int? = null
+
 
         val NOTIFY_ID: Int = 100;
         val notificationIntent = Intent(context, HomeFragment::class.java)
@@ -132,10 +134,13 @@ class HomeFragment : Fragment() {
 
                 Log.e("HomeFragment ad()   ", STEP.toString())
                 Log.e("HomeFragment ad()   ", dialogsArr.toString())
+
                 btn.visibility = INVISIBLE
                 dialogsList.adapter = adapter
 
+
             } else {
+                if(nostatus!= 0)
                 btn.visibility = VISIBLE
             }
 
@@ -174,6 +179,16 @@ class HomeFragment : Fragment() {
 
         }
 
+        fun noDialogs(status:Int){
+            if (status == 0) {
+                noDialogs.visibility = VISIBLE
+                btn.visibility = INVISIBLE
+            } else {
+                noDialogs.visibility = INVISIBLE
+                noDialogs.visibility =INVISIBLE
+
+            }
+        }
         fun downloadMassage(sub: String) {
 
             job.launch {
@@ -194,10 +209,9 @@ class HomeFragment : Fragment() {
                     var response = ob.getString("response")
                     if (response == "1") {
                         if (messageU.getString("count") == "0") {
-                            noDialogs.visibility = VISIBLE
-                            btn.visibility = INVISIBLE
+                            nostatus = 0
                         } else {
-                            noDialogs.visibility = INVISIBLE
+                            nostatus = 1
                             val messArr2 = messageU.getJSONArray("messages")
                             COUNT_MESS = messageU.getInt("count")
                             messArr = messArr2
@@ -248,54 +262,24 @@ class HomeFragment : Fragment() {
                     var response = ob.getString("response")
                     if (response == "1") {
                         if (dialogs.getString("count") == "0") {
-                            noDialogs.visibility = VISIBLE
-                            btn.visibility = INVISIBLE
+                            nostatus = 0
                         } else {
-                            noDialogs.visibility = INVISIBLE
+                            nostatus = 1
                             val dialogsArr2 = dialogs.getJSONArray("dialogs")
                             COUNT_DIALOGS = dialogs.getInt("count")
                             dialogsArr = dialogsArr2
 
-                            try {
-                                val jsonStr = URL(url.toString()).readText()
-                                if (jsonStr != "null") {
-                                    Log.e("Home.btnnext ", jsonStr)
-                                    val jsonResponse = JSONObject(jsonStr)
-                                    var ob =
-                                        jsonResponse.getJSONObject("Error")         //хранятся response и text       "Error":{"response":"1","text":"Ok"}
-                                    var dialogs =
-                                        jsonResponse.getJSONObject("dialogs")   // хранятся count и dialogs   "dialogs":{"count":2,"dialogs":{"1":{"unread":1,"number":1,"sub":"88005553535","name":"Андрей","lastname":"Хуеротов","mess":"запрос14","photo":"https://avatars.mds.yandex.net/get-pdb/1381440/2becdede-c4c2-4e6c-9b3d-05d5ae7e0409/s1200?webp=false","date":"2020-02-21 17:31:57"},"2":{"unread":3,"number":2,"sub":"89380794324","name":"Adam","lastname":"Amirbekov","mess":"запрос15","photo":"https://avatars.mds.yandex.net/get-pdb/938499/bb3e5208-82ad-48bd-a3be-a40a666132e4/s1200?webp=false","date":"2020-02-23 07:36:52"}}}}
-                                    //                            "dialogs":{"count":0,"dialogs":{"null"}}
 
-                                    var response = ob.getString("response")
-                                    if (response == "1") {
-                                        if (dialogs.getString("count") == "0") {
-                                            noDialogs.visibility = VISIBLE
-                                            btn.visibility = INVISIBLE
-                                        } else {
-                                            noDialogs.visibility = INVISIBLE
-                                            val dialogsArr2 = dialogs.getJSONArray("dialogs")
-                                            COUNT_DIALOGS = dialogs.getInt("count")
-                                            dialogsArr = dialogsArr2
-
-
-                                        }
-
-                                    }
-                                }
-                            } catch (e: EOFException) {
-                                Log.e("Home Fragment", "Исключение")
-                            }
                         }
                     }
                 }
             }
         }
+
                     val mainHandler = Handler(Looper.getMainLooper())
 
                     mainHandler.post(object : Runnable {
                         override fun run() {
-
 
                             if (dialogLayout.isVisible) {
                                 if (STEPMESS.toString() != messArr.toString()) {
@@ -306,6 +290,7 @@ class HomeFragment : Fragment() {
                             } else {
                                 downloadDialogs()
                                 if (STEP.toString() != dialogsArr.toString()) {
+                                    nostatus?.let { noDialogs(0) }
                                     ad()
                                     STEP = dialogsArr
                                 }
@@ -326,5 +311,6 @@ class HomeFragment : Fragment() {
 
                     return root
                 }
+
             }
 

@@ -170,7 +170,7 @@ class Code : AppCompatActivity() {
 
             val code: String = code1.text.toString()+code2.text.toString()+code3.text.toString()+code4.text.toString()
             Log.e("Code", "get code: $code")
-            if(RESPONSE_CODE == "3") {
+            if(RESPONSE_CODE == "3" || RESPONSE_CODE == "5") {
 
                 return true
             }else {
