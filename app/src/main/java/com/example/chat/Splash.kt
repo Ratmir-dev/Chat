@@ -23,9 +23,10 @@ companion object{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
+        val myBase: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val db:SharedPreferences.Editor = myBase.edit()
         val dbon: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
         val token: String? = dbon.getString("TOKEN", "unknown")
         val auto: String? = dbon.getString("AUTO","unknown")
 
@@ -82,6 +83,12 @@ companion object{
                                     val jsonResponse = JSONObject(res)
                                     val jsonstatus: String = jsonResponse.getString("response")
                                     if (jsonstatus == "1") {
+                                        db.putString("name", jsonResponse.getString("user_name"))
+                                        db.putString("num", jsonResponse.getString("user_num"))
+                                        db.putString("photo", jsonResponse.getString("user_photo"))
+                                        db.commit()
+
+
                                         startAct(1)
                                     } else
                                         if (jsonstatus == "7") {
