@@ -49,7 +49,7 @@ class Code : AppCompatActivity() {
 
             val myBase: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             val myBaseEdit:SharedPreferences.Editor = myBase.edit()
-            myBaseEdit.putString("token", TOKEN)
+            myBaseEdit.putString("TOKEN", TOKEN)
             myBaseEdit.commit()
 
 
@@ -60,35 +60,35 @@ class Code : AppCompatActivity() {
         startActivity(intent)
     }
 
-    class QueryCheckCode : AsyncTask<URL, Void, String>() {
-
-        override fun doInBackground(vararg params: URL?): String {
-            Log.e("Code","asynk start: "+ params[0].toString())
-            var response: String? = null
-            try {
-                response = NetworkUtils.getResponseFromURL(params[0]!!)
-            }catch (e: IOException){
-                e.printStackTrace()
-            }
-            Log.e("Code","response: "+ response.toString())
-
-            return response.toString()
-        }
-
-        override fun onPostExecute(result: String?) {
-
-            Log.e("Code", RESPONSE_CODE.toString())
-            var jsonResponse = JSONObject(result)
-            var jsonstatus: String = jsonResponse.getString("response")
-            RESPONSE_CODE = jsonstatus
-            if(RESPONSE_CODE == "3") {
-                TOKEN = jsonResponse.getString("token")
-
-            }else{
-
-            }
-        }
-    }
+//    class QueryCheckCode : AsyncTask<URL, Void, String>() {
+//
+//        override fun doInBackground(vararg params: URL?): String {
+//            Log.e("Code","asynk start: "+ params[0].toString())
+//            var response: String? = null
+//            try {
+//                response = NetworkUtils.getResponseFromURL(params[0]!!)
+//            }catch (e: IOException){
+//                e.printStackTrace()
+//            }
+//            Log.e("Code","response: "+ response.toString())
+//
+//            return response.toString()
+//        }
+//
+//        override fun onPostExecute(result: String?) {
+//
+//            Log.e("Code", RESPONSE_CODE.toString())
+//            var jsonResponse = JSONObject(result)
+//            var jsonstatus: String = jsonResponse.getString("response")
+//            RESPONSE_CODE = jsonstatus
+//            if(RESPONSE_CODE == "3") {
+//                TOKEN = jsonResponse.getString("token")
+//
+//            }else{
+//
+//            }
+//        }
+//    }
 
 
     override  fun onBackPressed() {
@@ -215,11 +215,9 @@ class Code : AppCompatActivity() {
 
                            if (checkCode()) {
                                TOKEN = jsonResponse.getString("token")
-
                                db.putString("AUTO", "1")
                                db.putString("TOKEN", TOKEN)
                                db.apply()
-
                                startNext()
                                Log.e("Code", "next")
                            }

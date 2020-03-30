@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity(){
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         val navigationView:NavigationView = findViewById(R.id.nav_view)
+
         val myBase: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val db:SharedPreferences.Editor = myBase.edit()
         val dbon: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
@@ -61,18 +62,13 @@ class MainActivity : AppCompatActivity(){
         val namesuka: TextView = headerlayout.findViewById(R.id.namesuka)
         val numsuka: TextView = headerlayout.findViewById(R.id.numsuka)
         val photosuka: ImageView = headerlayout.findViewById(R.id.photosuka)
-        Picasso.get() .load(photo!!.toUri()) .resize(50, 50) .centerCrop() .into(photosuka)
+        Picasso.get() .load(photo!!.toUri()) .resize(230, 230) .centerCrop() .into(photosuka)
 
         namesuka.text = name
         numsuka.text = num
 
 
-        val fab: FloatingActionButton = findViewById(R.id.fab)
-        fab.visibility = INVISIBLE
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
+
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)

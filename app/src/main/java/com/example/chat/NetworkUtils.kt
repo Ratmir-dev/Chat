@@ -25,6 +25,7 @@ companion object {
     val GET_MESS    = "getmess"
     val GET_DIALOGS = "alldialogs"
     val ACC_INFO    = "getaccountinfo"
+    val USER_INFO    = "getuserinfo"
 
     //_______________________________________________________________________Параметры
     val NUM     = "num"
@@ -121,6 +122,20 @@ companion object {
                 .appendQueryParameter(NUM, num)
                 .appendQueryParameter(TOKEN, token)
                 .appendQueryParameter(MESSAGE, mess)
+                .build()
+        var url: URL? = null
+        try {
+            url = URL(builtUri.toString())
+        } catch (e: MalformedURLException) {
+            e.printStackTrace()
+        }
+        return url!!
+    }
+    fun generateUrlUserInfo(token: String, num: String): URL {
+        val builtUri: Uri =
+            Uri.parse(API + USER_INFO).buildUpon()
+                .appendQueryParameter(NUM, num)
+                .appendQueryParameter(TOKEN, token)
                 .build()
         var url: URL? = null
         try {

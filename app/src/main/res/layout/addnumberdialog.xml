@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/LoginTextInputLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:hintEnabled="false"
+        app:prefixText="+7 ">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edt_addNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="60dp"
+            android:layout_weight ="0.76"
+            android:background="@drawable/edt"
+            android:hint="Номер телефона"
+            android:inputType="phone"
+            android:maxLength="10"
+            android:paddingLeft="10dp"
+            android:paddingTop="35dp"
+            android:singleLine="true"
+            android:textSize="16dp"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+</LinearLayout>

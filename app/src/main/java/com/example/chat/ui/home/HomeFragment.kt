@@ -40,13 +40,18 @@ import android.app.NotificationChannel
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.graphics.Color
+import android.text.Editable
 import android.widget.*
+import androidx.annotation.MainThread
+import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.postDelayed
 import androidx.core.view.get
 import com.example.chat.*
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.android.synthetic.main.dialog.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import java.io.EOFException
@@ -58,11 +63,12 @@ class HomeFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
 
     companion object {
-        var PAUSE:Int = 1000
+        var PAUSE: Int = 1000
         var COUNT_DIALOGS: Int? = null
         var COUNT_MESS: Int? = null
         var STEP: JSONArray? = null
         var STEPMESS: JSONArray? = null
+        var REPLASE: Int? = null
     }
 
     override fun onCreateView(
@@ -73,12 +79,15 @@ class HomeFragment : Fragment() {
     ): View? {
         homeViewModel =
             ViewModelProviders.of(this).get(HomeViewModel::class.java)
-        var root = inflater.inflate(R.layout.fragment_home, container, false)
+        val root = inflater.inflate(R.layout.fragment_home, container, false)
+        val numDialog = inflater.inflate(R.layout.addnumberdialog, container, false)
+
         // val textView: TextView = root.findViewById(R.id.text_home)
         //  homeViewModel.text.observe(this, Observer {
         //       textView.text = it
         //   })
 
+        REPLASE = 2
 
         val send_text: EditText = root.findViewById(R.id.send_text)
         val send_btn: ImageButton = root.findViewById(R.id.send_btn)
@@ -95,33 +104,86 @@ class HomeFragment : Fragment() {
         var messArr: JSONArray? = null
         val job = CoroutineScope(Dispatchers.IO)
 
+        var openDialog: String? = null
+        var dialogUName: String? = null
+        var dialogUNum: String? = null
+        var dialogUPhoto: String? = null
+
         val NOTIFY_ID: Int = 100;
         val notificationIntent = Intent(context, HomeFragment::class.java)
-        val contentIntent = PendingIntent.getActivity(
-            context,
-            0,
-            notificationIntent,
-            PendingIntent.FLAG_CANCEL_CURRENT
-        )
+        val contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT)
         val builder = NotificationCompat.Builder(context)
 
         dialogLayout.visibility = View.INVISIBLE
         dialogsLayout.visibility = View.VISIBLE
 
-        fun replaceXML(i: Int) {
+        val fab: FloatingActionButton = root.findViewById(R.id.fab)
+        val builderAddNumber = AlertDialog.Builder(root.context)
+        val suchka = LayoutInflater.from(context).inflate(R.layout.addnumberdialog, null)
+        val addNumberEdt: TextInputEditText = suchka.findViewById(R.id.edt_addNumber)
+
+        //val jopaNext:MaterialButton = numDialog.findViewById(R.id.btn_next)
+        builderAddNumber.setView(suchka)
+
+        builderAddNumber.setNegativeButton("Назад") { dialog, which ->
+            Toast.makeText(
+                root.context,
+                android.R.string.no, Toast.LENGTH_SHORT
+            ).show()
+        }
+        builderAddNumber.setPositiveButton("Написать") { dialog, which ->
+             var fabNum: String = addNumberEdt.text.toString()
+            job.launch {
+                val url = NetworkUtils.generateUrlUserInfo(token, "7$fabNum")
+                Log.e("Home fab dialog", url.toString())
+                val jsonStr = URL(url.toString()).readText()
+                if (jsonStr != "null") {
+                    Log.e("Home.positive btn ", jsonStr)
+                    val jsonResponse = JSONObject(jsonStr)
+
+                    var response = jsonResponse.getString("response")
+                    if (response == "1") {
+                        openDialog = "7"+addNumberEdt.text.toString()
+                        dialogUName = jsonResponse.getString("user_name")
+                        dialogUNum = jsonResponse.getString("user_num")
+                        dialogUPhoto = jsonResponse.getString("user_photo")
+                        REPLASE = 1
+                    }
+                    else{
+
+                    }
+                }
+            }
+            Toast.makeText(
+                root.context,
+                addNumberEdt.text, Toast.LENGTH_SHORT
+            ).show()
+
+        }
+        var ad = builderAddNumber.create()
+        noDialogs.visibility = INVISIBLE
+        btn.visibility = INVISIBLE
+
+
+        fun replaceXML(i: Int) {    //1 - диалоги 2 - диалог
             Log.e("Home ", "replace")
             if (i == 1) {
+
+                dialogName.text = dialogUName
+
                 dialogsLayout.visibility = View.INVISIBLE
+                fab.visibility = View.INVISIBLE
                 dialogLayout.visibility = View.VISIBLE
             } else {
                 dialogLayout.visibility = View.INVISIBLE
                 dialogsLayout.visibility = View.VISIBLE
+                fab.visibility = View.VISIBLE
             }
 
         }
 
         dialogBack.setOnClickListener {
-            replaceXML(2)
+            REPLASE = 2
 
         }
 
@@ -135,10 +197,12 @@ class HomeFragment : Fragment() {
                 Log.e("HomeFragment ad()   ", STEP.toString())
                 Log.e("HomeFragment ad()   ", dialogsArr.toString())
                 btn.visibility = INVISIBLE
+                fab.visibility = INVISIBLE
                 dialogsList.adapter = adapter
 
             } else {
                 btn.visibility = VISIBLE
+                fab.visibility = VISIBLE
             }
 
         }
@@ -160,7 +224,7 @@ class HomeFragment : Fragment() {
 
         }
 
-        var openDialog: String? = null
+
 
 
         fun sendMessage(sub: String, mess: String) {
@@ -196,10 +260,10 @@ class HomeFragment : Fragment() {
                     var response = ob.getString("response")
                     if (response == "1") {
                         if (messageU.getString("count") == "0") {
-                            noDialogs.visibility = VISIBLE
-                            btn.visibility = INVISIBLE
+                           // noDialogs.visibility = VISIBLE
+                          //  btn.visibility = INVISIBLE
                         } else {
-                            noDialogs.visibility = INVISIBLE
+                           // noDialogs.visibility = INVISIBLE
                             val messArr2 = messageU.getJSONArray("messages")
                             COUNT_MESS = messageU.getInt("count")
                             messArr = messArr2
@@ -218,7 +282,7 @@ class HomeFragment : Fragment() {
             val selectedDialog = dialogsList[position]
             val sub: String = selectedDialog.num.text.toString()
             openDialog = sub
-            replaceXML(1)
+            REPLASE =1
             dialogName.text = selectedDialog.name_d.text
 
 
@@ -248,10 +312,10 @@ class HomeFragment : Fragment() {
                     var response = ob.getString("response")
                     if (response == "1") {
                         if (dialogs.getString("count") == "0") {
-                            noDialogs.visibility = VISIBLE
-                            btn.visibility = INVISIBLE
+//                            noDialogs.visibility = VISIBLE
+//                            btn.visibility = INVISIBLE
                         } else {
-                            noDialogs.visibility = INVISIBLE
+//                            noDialogs.visibility = INVISIBLE
                             val dialogsArr2 = dialogs.getJSONArray("dialogs")
                             COUNT_DIALOGS = dialogs.getInt("count")
                             dialogsArr = dialogsArr2
@@ -261,43 +325,51 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-                    val mainHandler = Handler(Looper.getMainLooper())
 
-                    mainHandler.post(object : Runnable {
-                        override fun run() {
+        fab.setOnClickListener { view ->
+            //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+            //   .setAction("Action", null).show()
+            ad.show()
+        }
 
+        val mainHandler = Handler(Looper.getMainLooper())
 
-                            if (dialogLayout.isVisible) {
-                                if (STEPMESS.toString() != messArr.toString()) {
-                                    messAd()
-                                    STEPMESS = messArr
-                                }
-                                downloadMassage(openDialog!!)
-                            } else {
-                                if (dialogsLayout.isVisible) {
-                                    downloadDialogs()
-                                    if (STEP.toString() != dialogsArr.toString()) {
-                                        ad()
-                                        STEP = dialogsArr
-                                    }
-                                }
-                            }
-
-                            mainHandler.postDelayed(this, PAUSE.toLong())
-                        }
-                    })
+        mainHandler.post(object : Runnable {
+            override fun run() {
 
 
-
-
-                    btn.setOnClickListener {
-                        btn.visibility = INVISIBLE
-                        ad()
+                if (dialogLayout.isVisible) {
+                    if (STEPMESS.toString() != messArr.toString()) {
+                        messAd()
+                        STEPMESS = messArr
                     }
-
-
-                    return root
+                    downloadMassage(openDialog!!)
+                } else {
+                    if (dialogsLayout.isVisible) {
+                        downloadDialogs()
+                        if (STEP.toString() != dialogsArr.toString()) {
+                            ad()
+                            STEP = dialogsArr
+                        }
+                    }
                 }
+                replaceXML(REPLASE!!)
+
+                mainHandler.postDelayed(this, PAUSE.toLong())
+            }
+        })
+
+
+
+
+        btn.setOnClickListener {
+            btn.visibility = INVISIBLE
+            ad()
+        }
+
+
+        return root
+    }
 
     override fun onStop() {
         super.onStop()
@@ -308,5 +380,5 @@ class HomeFragment : Fragment() {
         super.onStart()
         PAUSE = 1000
     }
-            }
+}
 

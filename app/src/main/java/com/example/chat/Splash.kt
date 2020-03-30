@@ -33,6 +33,8 @@ companion object{
         Log.e("Splash TOKEN- ", token!!)
         Log.e("Splash AUTO- ", auto!!)
 
+
+
         fun startAct(i:Int){
             if(i == 1){
                 TOKEN = token
