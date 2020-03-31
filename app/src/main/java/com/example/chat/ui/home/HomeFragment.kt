@@ -104,7 +104,7 @@ class HomeFragment : Fragment() {
         var messArr: JSONArray? = null
         val job = CoroutineScope(Dispatchers.IO)
 
-        var openDialog: String? = null
+        var openDialog: String? = "1"
         var dialogUName: String? = null
         var dialogUNum: String? = null
         var dialogUPhoto: String? = null
@@ -131,10 +131,12 @@ class HomeFragment : Fragment() {
                 android.R.string.no, Toast.LENGTH_SHORT
             ).show()
         }
-        builderAddNumber.setPositiveButton("Написать") { dialog, which ->
-             var fabNum: String = addNumberEdt.text.toString()
+
+
+        //Открыть диалог с переданным номером
+        fun openDialogFromUser(num: String){
             job.launch {
-                val url = NetworkUtils.generateUrlUserInfo(token, "7$fabNum")
+                val url = NetworkUtils.generateUrlUserInfo(token, num)
                 Log.e("Home fab dialog", url.toString())
                 val jsonStr = URL(url.toString()).readText()
                 if (jsonStr != "null") {
@@ -154,22 +156,34 @@ class HomeFragment : Fragment() {
                     }
                 }
             }
+        }
+
+        //При клике на плавающую кнопку и кнопке написать
+        builderAddNumber.setPositiveButton("Написать") { dialog, which ->
+            var fabNum: String = addNumberEdt.text.toString()
+            openDialogFromUser("7$fabNum")
             Toast.makeText(
                 root.context,
                 addNumberEdt.text, Toast.LENGTH_SHORT
             ).show()
 
         }
+        //Установить функционал плавающей кнопки
         var ad = builderAddNumber.create()
+
+
+        //Скрывает кнопку обновить и нет диалогов
         noDialogs.visibility = INVISIBLE
         btn.visibility = INVISIBLE
 
 
+        //сменить окно Диалоги или Диалог
         fun replaceXML(i: Int) {    //1 - диалоги 2 - диалог
             Log.e("Home ", "replace")
             if (i == 1) {
 
                 dialogName.text = dialogUName
+                openDialogFromUser(openDialog!!)
 
                 dialogsLayout.visibility = View.INVISIBLE
                 fab.visibility = View.INVISIBLE
@@ -182,18 +196,20 @@ class HomeFragment : Fragment() {
 
         }
 
+        //Кнопка в диалоге меняет окно на список диалогов
         dialogBack.setOnClickListener {
             REPLASE = 2
 
         }
 
+
+        //Заполняет список диалогов, показывает ОБНОВИТЬ, если диалогов нет
         @UiThread
         fun ad() {
 
             if (dialogsArr != null) {
 
                 val adapter = RecipeAdapter1(getContext(), dialogsArr!!)
-
                 Log.e("HomeFragment ad()   ", STEP.toString())
                 Log.e("HomeFragment ad()   ", dialogsArr.toString())
                 btn.visibility = INVISIBLE
@@ -207,6 +223,7 @@ class HomeFragment : Fragment() {
 
         }
 
+        //Заполняет лист сообщениями
         @UiThread
         fun messAd() {
 
@@ -225,21 +242,16 @@ class HomeFragment : Fragment() {
         }
 
 
-
-
+        //Отправляет сообщение. Параметры sub:Кому mess:Текст сообщения
         fun sendMessage(sub: String, mess: String) {
             job.launch {
-
-
                 val url = NetworkUtils.generateUrlSendMess(token, sub, mess)
                 Log.e("Home SendMess", url.toString())
                 val jsonStr = URL(url.toString()).readText()
-
             }
-
-
         }
 
+        //Загружает сообщения с sub
         fun downloadMassage(sub: String) {
 
             job.launch {
@@ -277,6 +289,7 @@ class HomeFragment : Fragment() {
 
         }
 
+        //При клике на диалог из списка диалогов выбирается номер и меняется активность
         dialogsList.setOnItemClickListener { _, _, position, _ ->
 
             val selectedDialog = dialogsList[position]
@@ -294,7 +307,7 @@ class HomeFragment : Fragment() {
             send_text.setText("")
         }
 
-
+        //Загрузить список диалогов
         fun downloadDialogs() {
             job.launch {
                 val url = NetworkUtils.generateUrlAllDialogs(token)
@@ -326,12 +339,15 @@ class HomeFragment : Fragment() {
             }
         }
 
+        //Плавающая кнопка открывает диалог с выбором номера получателя
         fab.setOnClickListener { view ->
             //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
             //   .setAction("Action", null).show()
             ad.show()
         }
 
+
+        //Таймер, каждую секунду отправляет запрос на загрузку данных для текущего окна (Диалоги/Сообщения)
         val mainHandler = Handler(Looper.getMainLooper())
 
         mainHandler.post(object : Runnable {
@@ -343,6 +359,7 @@ class HomeFragment : Fragment() {
                         messAd()
                         STEPMESS = messArr
                     }
+
                     downloadMassage(openDialog!!)
                 } else {
                     if (dialogsLayout.isVisible) {
