@@ -42,6 +42,7 @@ import android.content.Context.NOTIFICATION_SERVICE
 import android.graphics.Color
 import android.text.Editable
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.MainThread
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -71,7 +72,12 @@ class HomeFragment : Fragment() {
         var REPLASE: Int? = null
     }
 
+
+
+
     override fun onCreateView(
+
+
 
         inflater: LayoutInflater,
         container: ViewGroup?,

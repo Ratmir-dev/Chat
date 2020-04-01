@@ -36,7 +36,9 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import com.example.chat.Login.Login
+import com.example.chat.ui.home.HomeFragment
 import com.squareup.picasso.Picasso
+import java.nio.charset.CodingErrorAction.REPLACE
 
 
 @Suppress("DEPRECATION")
@@ -88,6 +90,7 @@ class MainActivity : AppCompatActivity(){
         val dialogsLayout: CoordinatorLayout = findViewById(R.id.dialogs_layout)
         val dialogLayout: LinearLayout = findViewById(R.id.dialog_layout)
         if(dialogLayout.isVisible){
+            HomeFragment.REPLASE = 2
             dialogLayout.visibility = INVISIBLE
             dialogsLayout.visibility = VISIBLE
             return false
