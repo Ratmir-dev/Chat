@@ -39,7 +39,9 @@ import android.app.NotificationChannel
 
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
+import android.content.SharedPreferences
 import android.graphics.Color
+import android.preference.PreferenceManager
 import android.text.Editable
 import android.widget.*
 import androidx.activity.OnBackPressedCallback
@@ -49,16 +51,19 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.postDelayed
 import androidx.core.view.get
 import com.example.chat.*
+import com.example.chat.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.dialog.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import java.io.EOFException
 
 import com.example.chat.RecipeAdapter as RecipeAdapter1
 
+@Suppress("DEPRECATION")
 class HomeFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
@@ -127,6 +132,11 @@ class HomeFragment : Fragment() {
         val builderAddNumber = AlertDialog.Builder(root.context)
         val suchka = LayoutInflater.from(context).inflate(R.layout.addnumberdialog, null)
         val addNumberEdt: TextInputEditText = suchka.findViewById(R.id.edt_addNumber)
+        var regenMess: Int = 0
+
+
+        val db : FirebaseDatabase = FirebaseDatabase.getInstance()
+
 
         //val jopaNext:MaterialButton = numDialog.findViewById(R.id.btn_next)
         builderAddNumber.setView(suchka)
@@ -136,6 +146,77 @@ class HomeFragment : Fragment() {
                 root.context,
                 android.R.string.no, Toast.LENGTH_SHORT
             ).show()
+        }
+
+        //Вернет номер текущего аккаунта
+        fun getAccountInfo():String{
+            val dbon: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+            val accnum: String? = dbon.getString("num", "unknown")
+            return accnum!!
+        }
+
+        var acc: DatabaseReference = db.getReference().child("users").child(getAccountInfo())
+        Log.e("Home create",acc.toString())
+
+
+
+        //Загружает сообщения с sub
+        fun downloadMassage(sub: String) {
+
+            job.launch {
+
+
+                val url = NetworkUtils.generateUrlGetMess(token, openDialog!!)
+                Log.e("Home ", url.toString())
+                val jsonStr = URL(url.toString()).readText()
+                if (jsonStr != "null") {
+                    Log.e("Home.mess ", jsonStr)
+                    val jsonResponse = JSONObject(jsonStr)
+                    val ob =
+                        jsonResponse.getJSONObject("Error")         //хранятся response и text       "Error":{"response":"1","text":"Ok"}
+                    var messageU =
+                        jsonResponse.getJSONObject("messages")   // хранятся count и dialogs   "dialogs":{"count":2,"dialogs":{"1":{"unread":1,"number":1,"sub":"88005553535","name":"Андрей","lastname":"Хуеротов","mess":"запрос14","photo":"https://avatars.mds.yandex.net/get-pdb/1381440/2becdede-c4c2-4e6c-9b3d-05d5ae7e0409/s1200?webp=false","date":"2020-02-21 17:31:57"},"2":{"unread":3,"number":2,"sub":"89380794324","name":"Adam","lastname":"Amirbekov","mess":"запрос15","photo":"https://avatars.mds.yandex.net/get-pdb/938499/bb3e5208-82ad-48bd-a3be-a40a666132e4/s1200?webp=false","date":"2020-02-23 07:36:52"}}}}
+                    //                            "dialogs":{"count":0,"dialogs":{"null"}}
+
+                    var response = ob.getString("response")
+                    if (response == "1") {
+                        if (messageU.getString("count") == "0") {
+                            // noDialogs.visibility = VISIBLE
+                            //  btn.visibility = INVISIBLE
+                        } else {
+                            // noDialogs.visibility = INVISIBLE
+                            val messArr2 = messageU.getJSONArray("messages")
+                            COUNT_MESS = messageU.getInt("count")
+                            messArr = messArr2
+                            regenMess = 1
+
+
+                        }
+
+                    }
+                }
+            }
+
+
+        }
+
+        //Заполняет лист сообщениями
+        @UiThread
+        fun messAd() {
+
+            if (messArr != null) {
+
+                val adapter2 = AdapterMess(getContext(), messArr!!)
+
+                Log.e("Home messAd()   ", STEPMESS.toString())
+                Log.e("Home messAd()   ", messArr.toString())
+                dialogMess.adapter = adapter2
+                regenMess = 0
+
+            } else {
+                btn.visibility = VISIBLE
+            }
+
         }
 
 
@@ -151,17 +232,21 @@ class HomeFragment : Fragment() {
 
                     var response = jsonResponse.getString("response")
                     if (response == "1") {
-                        openDialog = "7"+addNumberEdt.text.toString()
+                        openDialog = num
+                        Log.e("Home OpenDialogFromUser"," $openDialog")
                         dialogUName = jsonResponse.getString("user_name")
                         dialogUNum = jsonResponse.getString("user_num")
                         dialogUPhoto = jsonResponse.getString("user_photo")
                         REPLASE = 1
+                        downloadMassage(getAccountInfo())
+
                     }
                     else{
 
                     }
                 }
             }
+
         }
 
         //При клике на плавающую кнопку и кнопке написать
@@ -229,23 +314,6 @@ class HomeFragment : Fragment() {
 
         }
 
-        //Заполняет лист сообщениями
-        @UiThread
-        fun messAd() {
-
-            if (messArr != null) {
-
-                val adapter2 = AdapterMess(getContext(), messArr!!)
-
-                Log.e("Home messAd()   ", STEPMESS.toString())
-                Log.e("Home messAd()   ", messArr.toString())
-                dialogMess.adapter = adapter2
-
-            } else {
-                btn.visibility = VISIBLE
-            }
-
-        }
 
 
         //Отправляет сообщение. Параметры sub:Кому mess:Текст сообщения
@@ -254,46 +322,10 @@ class HomeFragment : Fragment() {
                 val url = NetworkUtils.generateUrlSendMess(token, sub, mess)
                 Log.e("Home SendMess", url.toString())
                 val jsonStr = URL(url.toString()).readText()
+                Log.e("Home Send Mess","response $jsonStr")
             }
         }
 
-        //Загружает сообщения с sub
-        fun downloadMassage(sub: String) {
-
-            job.launch {
-
-
-                val url = NetworkUtils.generateUrlGetMess(token, sub)
-                Log.e("Home ", url.toString())
-                val jsonStr = URL(url.toString()).readText()
-                if (jsonStr != "null") {
-                    Log.e("Home.mess ", jsonStr)
-                    val jsonResponse = JSONObject(jsonStr)
-                    val ob =
-                        jsonResponse.getJSONObject("Error")         //хранятся response и text       "Error":{"response":"1","text":"Ok"}
-                    var messageU =
-                        jsonResponse.getJSONObject("messages")   // хранятся count и dialogs   "dialogs":{"count":2,"dialogs":{"1":{"unread":1,"number":1,"sub":"88005553535","name":"Андрей","lastname":"Хуеротов","mess":"запрос14","photo":"https://avatars.mds.yandex.net/get-pdb/1381440/2becdede-c4c2-4e6c-9b3d-05d5ae7e0409/s1200?webp=false","date":"2020-02-21 17:31:57"},"2":{"unread":3,"number":2,"sub":"89380794324","name":"Adam","lastname":"Amirbekov","mess":"запрос15","photo":"https://avatars.mds.yandex.net/get-pdb/938499/bb3e5208-82ad-48bd-a3be-a40a666132e4/s1200?webp=false","date":"2020-02-23 07:36:52"}}}}
-                    //                            "dialogs":{"count":0,"dialogs":{"null"}}
-
-                    var response = ob.getString("response")
-                    if (response == "1") {
-                        if (messageU.getString("count") == "0") {
-                           // noDialogs.visibility = VISIBLE
-                          //  btn.visibility = INVISIBLE
-                        } else {
-                           // noDialogs.visibility = INVISIBLE
-                            val messArr2 = messageU.getJSONArray("messages")
-                            COUNT_MESS = messageU.getInt("count")
-                            messArr = messArr2
-
-                        }
-
-                    }
-                }
-            }
-
-
-        }
 
         //При клике на диалог из списка диалогов выбирается номер и меняется активность
         dialogsList.setOnItemClickListener { _, _, position, _ ->
@@ -353,42 +385,111 @@ class HomeFragment : Fragment() {
         }
 
 
+        fun getActive():Boolean{
+            return dialogsLayout.isVisible
+        }
+
         //Таймер, каждую секунду отправляет запрос на загрузку данных для текущего окна (Диалоги/Сообщения)
-        val mainHandler = Handler(Looper.getMainLooper())
+      val mainHandler = Handler(Looper.getMainLooper())
 
         mainHandler.post(object : Runnable {
             override fun run() {
 
 
-                if (dialogLayout.isVisible) {
+
+                if (regenMess == 1) {
                     if (STEPMESS.toString() != messArr.toString()) {
                         messAd()
+                        regenMess = 0
                         STEPMESS = messArr
                     }
 
-                    downloadMassage(openDialog!!)
+
                 } else {
                     if (dialogsLayout.isVisible) {
-                        downloadDialogs()
+
                         if (STEP.toString() != dialogsArr.toString()) {
-                            ad()
+
                             STEP = dialogsArr
                         }
                     }
                 }
+                var rer: Int? = null
+                if(getActive())
+                    rer = 2
+                else rer = 1
+                if(rer!= REPLASE)
                 replaceXML(REPLASE!!)
 
                 mainHandler.postDelayed(this, PAUSE.toLong())
             }
         })
 
-
-
-
         btn.setOnClickListener {
             btn.visibility = INVISIBLE
             ad()
         }
+
+
+
+        val b = object : ValueEventListener{
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+
+                    val data = dataSnapshot.getValue()
+
+
+
+
+                }
+            }
+
+            override fun onCancelled(dataErr: DatabaseError) {
+
+            }
+
+        }
+
+       // acc.addListenerForSingleValueEvent(b)
+
+
+        val postListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                val post = dataSnapshot.getValue()
+                if(getActive()){
+                    Log.e("Home FireBase", "1")
+
+                    downloadDialogs()
+                    ad()
+                }
+                else{
+                    downloadMassage(getAccountInfo())
+                    messAd()
+                    Log.e("Home FireBase", "2")
+                }
+
+
+
+                // ...
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.e("Home fb", "loadPost:onCancelled", databaseError.toException())
+                // ...
+            }
+        }
+        acc.addValueEventListener(postListener)
+
+
+
+
+
+
+
 
 
         return root
@@ -401,7 +502,7 @@ class HomeFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        PAUSE = 1000
+        PAUSE = 100
     }
 }
 
