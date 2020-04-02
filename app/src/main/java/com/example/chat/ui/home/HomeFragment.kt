@@ -27,9 +27,6 @@ import androidx.lifecycle.ViewModelProviders
 import com.example.chat.Login.Code
 import com.google.android.material.textview.MaterialTextView
 import io.reactivex.subjects.PublishSubject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import java.lang.Thread.sleep
@@ -59,7 +56,9 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.dialog.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.coroutines.*
 import java.io.EOFException
+import java.lang.Runnable
 
 import com.example.chat.RecipeAdapter as RecipeAdapter1
 
@@ -133,6 +132,8 @@ class HomeFragment : Fragment() {
         val suchka = LayoutInflater.from(context).inflate(R.layout.addnumberdialog, null)
         val addNumberEdt: TextInputEditText = suchka.findViewById(R.id.edt_addNumber)
         var regenMess: Int = 0
+        var regenDialogs: Int = 1
+        var regenHeader: Int = 0
 
 
         val db : FirebaseDatabase = FirebaseDatabase.getInstance()
@@ -220,14 +221,21 @@ class HomeFragment : Fragment() {
         }
 
 
+        fun setHeaderDialog(){
+            dialogName.text = dialogUName
+        }
+        fun addWaitSetHeaderDialod(a:String){
+            regenHeader = 1
+        }
+
         //Открыть диалог с переданным номером
         fun openDialogFromUser(num: String){
             job.launch {
                 val url = NetworkUtils.generateUrlUserInfo(token, num)
-                Log.e("Home fab dialog", url.toString())
+                Log.e("Open dialog", url.toString())
                 val jsonStr = URL(url.toString()).readText()
                 if (jsonStr != "null") {
-                    Log.e("Home.positive btn ", jsonStr)
+                    Log.e("Open dialog ", jsonStr)
                     val jsonResponse = JSONObject(jsonStr)
 
                     var response = jsonResponse.getString("response")
@@ -237,6 +245,10 @@ class HomeFragment : Fragment() {
                         dialogUName = jsonResponse.getString("user_name")
                         dialogUNum = jsonResponse.getString("user_num")
                         dialogUPhoto = jsonResponse.getString("user_photo")
+
+                        val status: Deferred<String> = async{dialogUName!!}
+                        addWaitSetHeaderDialod(status.await())
+
                         REPLASE = 1
                         downloadMassage(getAccountInfo())
 
@@ -269,10 +281,9 @@ class HomeFragment : Fragment() {
 
 
         //сменить окно Диалоги или Диалог
-        fun replaceXML(i: Int) {    //1 - диалоги 2 - диалог
+        fun replaceXML(i: Int) {    //1 - диалог 2 - диалоги
             Log.e("Home ", "replace")
             if (i == 1) {
-
                 dialogName.text = dialogUName
                 openDialogFromUser(openDialog!!)
 
@@ -284,13 +295,11 @@ class HomeFragment : Fragment() {
                 dialogsLayout.visibility = View.VISIBLE
                 fab.visibility = View.VISIBLE
             }
-
         }
 
         //Кнопка в диалоге меняет окно на список диалогов
         dialogBack.setOnClickListener {
             REPLASE = 2
-
         }
 
 
@@ -304,7 +313,7 @@ class HomeFragment : Fragment() {
                 Log.e("HomeFragment ad()   ", STEP.toString())
                 Log.e("HomeFragment ad()   ", dialogsArr.toString())
                 btn.visibility = INVISIBLE
-                fab.visibility = INVISIBLE
+                fab.visibility = VISIBLE
                 dialogsList.adapter = adapter
 
             } else {
@@ -370,12 +379,14 @@ class HomeFragment : Fragment() {
                             val dialogsArr2 = dialogs.getJSONArray("dialogs")
                             COUNT_DIALOGS = dialogs.getInt("count")
                             dialogsArr = dialogsArr2
+                            regenDialogs = 1
 
                         }
                     }
                 }
             }
         }
+
 
         //Плавающая кнопка открывает диалог с выбором номера получателя
         fab.setOnClickListener { view ->
@@ -403,16 +414,19 @@ class HomeFragment : Fragment() {
                         regenMess = 0
                         STEPMESS = messArr
                     }
-
-
-                } else {
-                    if (dialogsLayout.isVisible) {
-
+                }
+                if (regenDialogs == 1) {
                         if (STEP.toString() != dialogsArr.toString()) {
-
+                            ad()
+                            regenDialogs = 0
                             STEP = dialogsArr
                         }
-                    }
+                }
+
+                if(regenHeader == 1){
+                    regenHeader = 0
+                    setHeaderDialog()
+
                 }
                 var rer: Int? = null
                 if(getActive())
@@ -491,6 +505,7 @@ class HomeFragment : Fragment() {
 
 
 
+        downloadDialogs()
 
         return root
     }
@@ -501,6 +516,7 @@ class HomeFragment : Fragment() {
     }
 
     override fun onStart() {
+
         super.onStart()
         PAUSE = 100
     }
