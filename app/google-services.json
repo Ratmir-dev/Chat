@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "305249584507",
+    "firebase_url": "https://chatsuka.firebaseio.com",
+    "project_id": "chatsuka",
+    "storage_bucket": "chatsuka.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:305249584507:android:de8623dedc96f0205429de",
+        "android_client_info": {
+          "package_name": "com.example.chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "305249584507-kltdt4c64gljs8m2k51hn0vot54gcbcf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chat",
+            "certificate_hash": "4cee0c34dcc707ba9eb8529bd1bb56a853035e4d"
+          }
+        },
+        {
+          "client_id": "305249584507-egc34h9jgfmfv4molvt77ev5ve87nq2f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1DdZxRXU0fuECecB9D-3xbFhhSUI6SjY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "305249584507-egc34h9jgfmfv4molvt77ev5ve87nq2f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
