@@ -313,11 +313,13 @@ class HomeFragment : Fragment() {
                 Log.e("HomeFragment ad()   ", STEP.toString())
                 Log.e("HomeFragment ad()   ", dialogsArr.toString())
                 btn.visibility = INVISIBLE
+                if(REPLASE == 2)
                 fab.visibility = VISIBLE
                 dialogsList.adapter = adapter
 
             } else {
                 btn.visibility = VISIBLE
+                if(REPLASE == 2)
                 fab.visibility = VISIBLE
             }
 
@@ -482,6 +484,8 @@ class HomeFragment : Fragment() {
                 else{
                     downloadMassage(getAccountInfo())
                     messAd()
+                    downloadDialogs()
+                    ad()
                     Log.e("Home FireBase", "2")
                 }
 
