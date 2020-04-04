@@ -99,41 +99,45 @@ class HomeFragment : Fragment() {
 
         REPLASE = 2
 
-        val send_text: EditText = root.findViewById(R.id.send_text)
-        val send_btn: ImageButton = root.findViewById(R.id.send_btn)
-        val token: String = SplashActivity.TOKEN.toString()
-        val noDialogs: MaterialTextView = root.findViewById(R.id.no_dialogs)
-        val dialogName: MaterialTextView = root.findViewById(R.id.dialog_name)
-        val dialogsList: ListView = root.findViewById(R.id.dialogs)
-        val dialogMess: ListView = root.findViewById(R.id.dialog_mess)
-        val dialogsLayout: CoordinatorLayout = root.findViewById(R.id.dialogs_layout)
-        val dialogLayout: LinearLayout = root.findViewById(R.id.dialog_layout)
-        val btn: MaterialButton = root.findViewById(R.id.btn)
-        val dialogBack: ImageButton = root.findViewById(R.id.dialog_back)
-        var dialogsArr: JSONArray? = null
-        var messArr: JSONArray? = null
-        val job = CoroutineScope(Dispatchers.IO)
+        val send_text:        EditText          = root.findViewById(R.id.send_text)
+        val send_btn:         ImageButton       = root.findViewById(R.id.send_btn)
+        val token:            String            = SplashActivity.TOKEN.toString()
+        val noDialogs:        MaterialTextView  = root.findViewById(R.id.no_dialogs)
+        val noMess:           MaterialTextView  = root.findViewById(R.id.no_mess)
+        val dialogName:       MaterialTextView  = root.findViewById(R.id.dialog_name)
+        val dialogsList:      ListView          = root.findViewById(R.id.dialogs)
+        val dialogMess:       ListView          = root.findViewById(R.id.dialog_mess)      // dialog
+        val dialogsLayout:    CoordinatorLayout = root.findViewById(R.id.dialogs_layout)
+        val dialogLayout:     LinearLayout      = root.findViewById(R.id.dialog_layout)
+        val btn:              MaterialButton    = root.findViewById(R.id.btn)
+        val dialogBack:       ImageButton       = root.findViewById(R.id.dialog_back)
 
-        var openDialog: String? = "1"
-        var dialogUName: String? = null
-        var dialogUNum: String? = null
-        var dialogUPhoto: String? = null
+        var dialogsArr:       JSONArray? = null
+        var messArr:          JSONArray? = null
+        val job                  = CoroutineScope(Dispatchers.IO)
 
-        val NOTIFY_ID: Int = 100;
-        val notificationIntent = Intent(context, HomeFragment::class.java)
-        val contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT)
-        val builder = NotificationCompat.Builder(context)
+        var openDialog:       String? = "1"
+        var dialogUName:      String? = null
+        var dialogUNum:       String? = null
+        var dialogUPhoto:     String? = null
+
+        val NOTIFY_ID:        Int     = 100
+        val notificationIntent                  = Intent(context, HomeFragment::class.java)
+        val contentIntent         = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val builder                             = NotificationCompat.Builder(context)
 
         dialogLayout.visibility = View.INVISIBLE
         dialogsLayout.visibility = View.VISIBLE
+        noMess.visibility = View.INVISIBLE
 
-        val fab: FloatingActionButton = root.findViewById(R.id.fab)
-        val builderAddNumber = AlertDialog.Builder(root.context)
-        val suchka = LayoutInflater.from(context).inflate(R.layout.addnumberdialog, null)
-        val addNumberEdt: TextInputEditText = suchka.findViewById(R.id.edt_addNumber)
-        var regenMess: Int = 0
-        var regenDialogs: Int = 1
-        var regenHeader: Int = 0
+        val fab:              FloatingActionButton = root.findViewById(R.id.fab)
+        val builderAddNumber                       = AlertDialog.Builder(root.context)
+        val suchka                          = LayoutInflater.from(context).inflate(R.layout.addnumberdialog, null)
+        val addNumberEdt:     TextInputEditText    = suchka.findViewById(R.id.edt_addNumber)
+        var regenMess:        Int = 0
+        var regenDialogs:     Int = 1
+        var regenHeader:      Int = 0
+        var regenNoMess:      Int = 0
 
 
         val db : FirebaseDatabase = FirebaseDatabase.getInstance()
@@ -141,13 +145,18 @@ class HomeFragment : Fragment() {
 
         //val jopaNext:MaterialButton = numDialog.findViewById(R.id.btn_next)
         builderAddNumber.setView(suchka)
-
         builderAddNumber.setNegativeButton("Назад") { dialog, which ->
             Toast.makeText(
                 root.context,
                 android.R.string.no, Toast.LENGTH_SHORT
             ).show()
         }
+
+        fun noMess(viz: Int){
+            if(viz == 1) noMess.visibility = View.VISIBLE
+            else noMess.visibility = View.INVISIBLE
+        }
+
 
         //Вернет номер текущего аккаунта
         fun getAccountInfo():String{
@@ -184,6 +193,7 @@ class HomeFragment : Fragment() {
                         if (messageU.getString("count") == "0") {
                             // noDialogs.visibility = VISIBLE
                             //  btn.visibility = INVISIBLE
+                            regenNoMess = 1
                         } else {
                             // noDialogs.visibility = INVISIBLE
                             val messArr2 = messageU.getJSONArray("messages")
@@ -191,6 +201,7 @@ class HomeFragment : Fragment() {
                             messArr = messArr2
                             regenMess = 1
 
+                            regenNoMess = 0
 
                         }
 
@@ -212,6 +223,7 @@ class HomeFragment : Fragment() {
                 Log.e("Home messAd()   ", STEPMESS.toString())
                 Log.e("Home messAd()   ", messArr.toString())
                 dialogMess.adapter = adapter2
+                dialogMess.visibility = View.VISIBLE
                 regenMess = 0
 
             } else {
@@ -291,6 +303,7 @@ class HomeFragment : Fragment() {
                 fab.visibility = View.INVISIBLE
                 dialogLayout.visibility = View.VISIBLE
             } else {
+                dialogMess.visibility = View.INVISIBLE
                 dialogLayout.visibility = View.INVISIBLE
                 dialogsLayout.visibility = View.VISIBLE
                 fab.visibility = View.VISIBLE
@@ -423,6 +436,10 @@ class HomeFragment : Fragment() {
                             regenDialogs = 0
                             STEP = dialogsArr
                         }
+                }
+                if(regenNoMess < 2){
+                    noMess(regenNoMess)
+                    regenNoMess = 2
                 }
 
                 if(regenHeader == 1){
